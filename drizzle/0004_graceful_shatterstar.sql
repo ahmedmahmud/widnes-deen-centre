@@ -1,0 +1,1 @@
+ALTER TABLE "page_versions" ADD COLUMN "schedule_media_id" uuid;
