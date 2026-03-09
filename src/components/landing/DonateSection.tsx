@@ -58,7 +58,7 @@ export function DonateSection({ content }: DonateSectionProps) {
           </div>
           <div className="h-full min-h-[260px] sm:min-h-[300px] relative overflow-hidden bg-forest flex flex-col justify-center items-center text-center p-8 border-4 border-double border-sand/20">
             <span className="material-symbols-outlined text-7xl sm:text-8xl text-sand/20 mb-4">
-              savings
+              brightness_2
             </span>
             <p className="font-serif text-xl sm:text-2xl text-sand italic">
               &quot;{content.quote}&quot;

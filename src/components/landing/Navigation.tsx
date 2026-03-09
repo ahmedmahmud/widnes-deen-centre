@@ -27,7 +27,7 @@ export function Navigation() {
             <img
               src="/logo-wdc.png"
               alt="Widnes Deen Centre"
-              className="h-9 sm:h-10 w-auto text-sand"
+              className="h-10 sm:h-12 w-auto"
             />
           </a>
           <div className="hidden md:flex flex-1 items-center justify-end space-x-12 px-8 lg:px-12">

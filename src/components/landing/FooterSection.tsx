@@ -66,9 +66,11 @@ export function FooterSection({ content }: FooterSectionProps) {
             </li>
             <li className="flex items-center gap-4">
               <span className="material-symbols-outlined text-xl text-clay">
-                mail
+                phone
               </span>
-              <span>{content.contactEmail}</span>
+              <a href={`tel:${content.contactPhone.replace(/\s/g, "")}`} className="hover:text-white transition-colors">
+                {content.contactPhone}
+              </a>
             </li>
           </ul>
         </div>

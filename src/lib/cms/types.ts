@@ -58,7 +58,7 @@ export type FooterContent = {
 	blurb: string;
 	menuLinks: { label: string; href: string }[];
 	contactAddressLines: string[];
-	contactEmail: string;
+	contactPhone: string;
 	socialLinks: { label: string; href: string }[];
 };
 

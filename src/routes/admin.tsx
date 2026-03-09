@@ -569,9 +569,9 @@ function AdminRoute() {
                 hint="One line per row"
               />
               <TextInput
-                label="Contact Email"
-                value={values.footerContactEmail}
-                onChange={(v) => updateField("footerContactEmail", v)}
+                label="Contact Phone"
+                value={values.footerContactPhone}
+                onChange={(v) => updateField("footerContactPhone", v)}
               />
 
               {/* Menu Links */}

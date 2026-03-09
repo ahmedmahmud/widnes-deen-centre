@@ -44,7 +44,7 @@ export type PageFormValues = {
 	footerBlurb: string;
 	footerMenuLinks: { label: string; href: string }[];
 	footerContactAddressLines: string;
-	footerContactEmail: string;
+	footerContactPhone: string;
 	footerSocialLinks: { label: string; href: string }[];
 };
 
@@ -98,7 +98,7 @@ export const contentToFormValues = (
 	footerBlurb: content.footer.blurb,
 	footerMenuLinks: content.footer.menuLinks,
 	footerContactAddressLines: content.footer.contactAddressLines.join("\n"),
-	footerContactEmail: content.footer.contactEmail,
+	footerContactPhone: content.footer.contactPhone,
 	footerSocialLinks: content.footer.socialLinks,
 });
 
@@ -162,7 +162,7 @@ export const formValuesToContent = (values: PageFormValues): PageContent => ({
 			.split("\n")
 			.map((line) => line.trim())
 			.filter(Boolean),
-		contactEmail: values.footerContactEmail,
+		contactPhone: values.footerContactPhone,
 		socialLinks: values.footerSocialLinks,
 	},
 });

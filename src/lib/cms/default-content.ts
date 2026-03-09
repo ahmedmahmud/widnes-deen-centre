@@ -91,7 +91,7 @@ export const defaultPageContent: PageContent = {
 			{ label: "Contact", href: "#find-us" },
 		],
 		contactAddressLines: ["Widnes Deen Centre", "Widnes, UK"],
-		contactEmail: "info@widnesdeencentre.org",
+		contactPhone: "0151 XXX XXXX",
 		socialLinks: [
 			{ label: "FB", href: "#" },
 			{ label: "TW", href: "#" },
