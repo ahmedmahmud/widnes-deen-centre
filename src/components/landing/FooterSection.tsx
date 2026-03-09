@@ -50,7 +50,7 @@ export function FooterSection({ content }: FooterSectionProps) {
           <h3 className="font-mono text-clay text-xs uppercase tracking-widest mb-8 font-bold">
             Contact
           </h3>
-          <ul className="space-y-6 font-mono text-sm opacity-80">
+          <ul className="space-y-6 font-mono text-sm opacity-80 [font-variant-numeric:tabular-nums]">
             <li className="flex items-start gap-4">
               <span className="material-symbols-outlined text-xl text-clay">
                 location_on
@@ -68,9 +68,13 @@ export function FooterSection({ content }: FooterSectionProps) {
               <span className="material-symbols-outlined text-xl text-clay">
                 phone
               </span>
-              <a href={`tel:${content.contactPhone.replace(/\s/g, "")}`} className="hover:text-white transition-colors">
-                {content.contactPhone}
-              </a>
+              {content.contactPhone ? (
+                <a href={`tel:${content.contactPhone.replace(/\s/g, "")}`} className="hover:text-white transition-colors">
+                  {content.contactPhone}
+                </a>
+              ) : (
+                <span>{(content as any).contactEmail ?? ""}</span>
+              )}
             </li>
           </ul>
         </div>
