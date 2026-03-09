@@ -36,11 +36,7 @@ export function AboutSection({ content }: AboutSectionProps) {
             <p className="font-serif text-lg md:text-2xl text-sand/80 leading-relaxed border-l-4 border-clay pl-6 sm:pl-8 py-2">
               {content.missionBody}
             </p>
-            {content.missionBodySecondary ? (
-              <p className="font-serif text-lg md:text-2xl text-sand/80 leading-relaxed border-l-4 border-clay pl-6 sm:pl-8 py-2">
-                {content.missionBodySecondary}
-              </p>
-            ) : null}
+
           </div>
         </div>
       </div>

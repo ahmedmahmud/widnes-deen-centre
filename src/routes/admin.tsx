@@ -66,6 +66,12 @@ function AdminRoute() {
   >("idle");
   const [pickerTarget, setPickerTarget] = useState<string | null>(null);
 
+  // Dirty state: compare current values to initial (from DB)
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
+
   // Sync state when loader data changes (e.g. after router.invalidate())
   useEffect(() => {
     setValues(contentToFormValues(data.landing.content, data.landing.scheduleMediaId));
@@ -123,8 +129,8 @@ function AdminRoute() {
   }, []);
 
   /* ── Save handler ── */
-  const handleSave = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSave = async (event?: React.FormEvent) => {
+    event?.preventDefault();
     setSaveState("saving");
     try {
       await saveLandingFn({
@@ -173,10 +179,10 @@ function AdminRoute() {
               Edit Page
             </h1>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             <a
               href="/"
-              className="px-4 py-2 border border-forest/20 text-xs font-mono uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors flex items-center gap-2"
+              className="px-3 py-2 sm:px-4 border border-forest/20 text-xs font-mono uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors flex items-center gap-2"
             >
               <span className="material-symbols-outlined text-base">arrow_back</span>
               View Page
@@ -184,7 +190,7 @@ function AdminRoute() {
             <button
               type="button"
               onClick={() => setActiveTab("editor")}
-              className={`px-4 py-2 border text-xs font-mono uppercase tracking-widest ${
+              className={`px-3 py-2 sm:px-4 border text-xs font-mono uppercase tracking-widest ${
                 activeTab === "editor"
                   ? "bg-forest text-sand"
                   : "border-forest/20 text-forest"
@@ -195,7 +201,7 @@ function AdminRoute() {
             <button
               type="button"
               onClick={() => setActiveTab("media")}
-              className={`px-4 py-2 border text-xs font-mono uppercase tracking-widest ${
+              className={`px-3 py-2 sm:px-4 border text-xs font-mono uppercase tracking-widest ${
                 activeTab === "media"
                   ? "bg-forest text-sand"
                   : "border-forest/20 text-forest"
@@ -207,7 +213,7 @@ function AdminRoute() {
         </div>
 
         {activeTab === "editor" ? (
-          <form onSubmit={handleSave} className="space-y-12">
+          <form onSubmit={handleSave} className="space-y-12 pb-24">
             {/* ═══════ Hero Section ═══════ */}
             <SectionCard title="Hero Section" description="The main banner visitors see first">
               <TextInput
@@ -340,12 +346,7 @@ function AdminRoute() {
                 value={values.aboutMissionBody}
                 onChange={(v) => updateField("aboutMissionBody", v)}
               />
-              <TextArea
-                label="Mission Body (Secondary)"
-                value={values.aboutMissionBodySecondary}
-                onChange={(v) => updateField("aboutMissionBodySecondary", v)}
-                hint="Optional second paragraph"
-              />
+
               <ImagePickerField
                 label="About Section Image"
                 imageId={values.aboutImageId}
@@ -412,7 +413,6 @@ function AdminRoute() {
                         id: `slide-${Date.now()}`,
                         imageId: "",
                         title: "New Slide",
-                        figureLabel: `Fig. ${String(next.length + 1).padStart(2, "0")}`,
                       });
                       updateField("locationSlides", next);
                     }}
@@ -479,15 +479,6 @@ function AdminRoute() {
                         onChange={(v) => {
                           const next = [...values.locationSlides];
                           next[idx] = { ...slide, title: v };
-                          updateField("locationSlides", next);
-                        }}
-                      />
-                      <TextInput
-                        label="Figure Label"
-                        value={slide.figureLabel}
-                        onChange={(v) => {
-                          const next = [...values.locationSlides];
-                          next[idx] = { ...slide, figureLabel: v };
                           updateField("locationSlides", next);
                         }}
                       />
@@ -603,8 +594,8 @@ function AdminRoute() {
                   </button>
                 </div>
                 {values.footerMenuLinks.map((link, idx) => (
-                  <div key={idx} className="flex gap-3 items-end">
-                    <div className="flex-1">
+                  <div key={idx} className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-end border border-forest/5 p-3 sm:p-0 sm:border-0">
+                    <div className="flex-1 min-w-0">
                       <TextInput
                         label="Label"
                         value={link.label}
@@ -615,7 +606,7 @@ function AdminRoute() {
                         }}
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <TextInput
                         label="Link"
                         value={link.href}
@@ -634,7 +625,7 @@ function AdminRoute() {
                           values.footerMenuLinks.filter((_, i) => i !== idx),
                         )
                       }
-                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors mb-2"
+                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors self-start sm:self-auto sm:mb-2 flex-shrink-0"
                     >
                       Remove
                     </button>
@@ -662,8 +653,8 @@ function AdminRoute() {
                   </button>
                 </div>
                 {values.footerSocialLinks.map((link, idx) => (
-                  <div key={idx} className="flex gap-3 items-end">
-                    <div className="flex-1">
+                  <div key={idx} className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-end border border-forest/5 p-3 sm:p-0 sm:border-0">
+                    <div className="flex-1 min-w-0">
                       <TextInput
                         label="Label"
                         value={link.label}
@@ -674,7 +665,7 @@ function AdminRoute() {
                         }}
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <TextInput
                         label="URL"
                         value={link.href}
@@ -693,7 +684,7 @@ function AdminRoute() {
                           values.footerSocialLinks.filter((_, i) => i !== idx),
                         )
                       }
-                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors mb-2"
+                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors self-start sm:self-auto sm:mb-2 flex-shrink-0"
                     >
                       Remove
                     </button>
@@ -701,21 +692,6 @@ function AdminRoute() {
                 ))}
               </div>
             </SectionCard>
-
-            {/* ── Save button ── */}
-            <div className="flex items-center gap-4">
-              <button
-                type="submit"
-                disabled={saveState === "saving"}
-                className="bg-forest text-sand px-8 py-4 font-mono uppercase tracking-widest text-sm disabled:opacity-60 hover:bg-forest-light transition-colors"
-              >
-                {saveState === "saving" ? "Saving..." : "Save & Publish"}
-              </button>
-              <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
-                {saveState === "saved" && "Saved successfully"}
-                {saveState === "error" && "Save failed - please try again"}
-              </span>
-            </div>
           </form>
         ) : (
           <MediaManager
@@ -728,6 +704,40 @@ function AdminRoute() {
           />
         )}
       </div>
+
+      {/* ── Unsaved changes sticky bar ── */}
+      {activeTab === "editor" && (isDirty || saveState === "saving" || saveState === "saved" || saveState === "error") && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-forest border-t-2 border-clay shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              {saveState === "saved" ? (
+                <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-clay">
+                  Saved successfully
+                </span>
+              ) : saveState === "error" ? (
+                <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-clay">
+                  Save failed — try again
+                </span>
+              ) : (
+                <>
+                  <span className="w-2 h-2 bg-clay rounded-full flex-shrink-0 animate-pulse" />
+                  <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-sand">
+                    You have unsaved changes
+                  </span>
+                </>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saveState === "saving" || !isDirty}
+              className="bg-clay text-sand px-5 py-2.5 sm:px-8 sm:py-3 font-mono uppercase tracking-widest text-xs sm:text-sm disabled:opacity-60 hover:bg-clay/80 transition-colors flex-shrink-0"
+            >
+              {saveState === "saving" ? "Saving..." : "Save & Publish"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Media picker modal ── */}
       {pickerTarget ? (
@@ -867,45 +877,43 @@ function ImagePickerField({
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
-      <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={onBrowse}
+        className="border border-forest/20 px-3 py-3 sm:px-4 bg-white/70 text-left flex items-center gap-3 sm:gap-4 hover:border-forest transition-colors w-full min-w-0"
+      >
+        <span className="w-12 h-12 sm:w-14 sm:h-14 border border-forest/10 bg-sand flex items-center justify-center text-xs font-mono text-forest/60 flex-shrink-0 overflow-hidden">
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            "None"
+          )}
+        </span>
+        <span className="flex-1 min-w-0 overflow-hidden">
+          <span className="font-mono text-xs uppercase tracking-widest text-forest/60 block">
+            {imageId ? "Selected" : "No file selected"}
+          </span>
+          <span className="text-sm text-forest truncate block">
+            {imageId ? `ID: ${imageId.slice(0, 8)}...` : "Click to browse"}
+          </span>
+        </span>
+        <span className="text-xs uppercase font-mono text-sand bg-forest px-2 py-1 sm:px-3 sm:py-1.5 flex-shrink-0">
+          Browse
+        </span>
+      </button>
+      {imageId && (
         <button
           type="button"
-          onClick={onBrowse}
-          className="border border-forest/20 px-4 py-3 bg-white/70 text-left flex items-center gap-4 flex-1 hover:border-forest transition-colors"
+          onClick={onClear}
+          className="self-start text-xs uppercase font-mono text-clay border border-clay/30 px-3 py-1.5 hover:bg-clay hover:text-sand transition-colors"
         >
-          <span className="w-14 h-14 border border-forest/10 bg-sand flex items-center justify-center text-xs font-mono text-forest/60 flex-shrink-0 overflow-hidden">
-            {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              "None"
-            )}
-          </span>
-          <span className="flex-1 min-w-0">
-            <span className="font-mono text-xs uppercase tracking-widest text-forest/60 block">
-              {imageId ? "Selected" : "No image selected"}
-            </span>
-            <span className="text-sm text-forest truncate block">
-              {imageId ? `ID: ${imageId.slice(0, 8)}...` : "Click to browse library"}
-            </span>
-          </span>
-          <span className="text-xs uppercase font-mono text-sand bg-forest px-3 py-1.5 flex-shrink-0">
-            Browse
-          </span>
+          Clear Selection
         </button>
-        {imageId && (
-          <button
-            type="button"
-            onClick={onClear}
-            className="text-xs uppercase font-mono text-clay border border-clay/30 px-3 py-1.5 hover:bg-clay hover:text-sand transition-colors"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 }

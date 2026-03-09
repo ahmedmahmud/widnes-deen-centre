@@ -22,7 +22,6 @@ export type AboutContent = {
 	missionLabel: string;
 	missionTitle: string;
 	missionBody: string;
-	missionBodySecondary: string;
 	imageId?: string | null;
 };
 
@@ -30,7 +29,6 @@ export type LocationSlide = {
 	id: string;
 	imageId: string;
 	title: string;
-	figureLabel: string;
 };
 
 export type LocationContent = {

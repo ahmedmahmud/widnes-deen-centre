@@ -17,6 +17,10 @@ export const Route = createRootRoute({
 			{
 				title: "Widnes Deen Centre",
 			},
+			{
+				name: "theme-color",
+				content: "#0f3e30",
+			},
 		],
 		links: [
 			{

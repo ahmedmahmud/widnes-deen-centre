@@ -19,7 +19,6 @@ export type PageFormValues = {
 	aboutMissionLabel: string;
 	aboutMissionTitle: string;
 	aboutMissionBody: string;
-	aboutMissionBodySecondary: string;
 	aboutImageId: string | null;
 	locationHeadingLabel: string;
 	locationTitleLineOne: string;
@@ -32,7 +31,6 @@ export type PageFormValues = {
 		id: string;
 		imageId: string;
 		title: string;
-		figureLabel: string;
 	}[];
 	donateHeadingLineOne: string;
 	donateHeadingLineTwo: string;
@@ -79,7 +77,6 @@ export const contentToFormValues = (
 	aboutMissionLabel: content.about.missionLabel,
 	aboutMissionTitle: content.about.missionTitle,
 	aboutMissionBody: content.about.missionBody,
-	aboutMissionBodySecondary: content.about.missionBodySecondary,
 	aboutImageId: content.about.imageId ?? null,
 	locationHeadingLabel: content.location.headingLabel,
 	locationTitleLineOne: content.location.titleLineOne,
@@ -132,7 +129,6 @@ export const formValuesToContent = (values: PageFormValues): PageContent => ({
 		missionLabel: values.aboutMissionLabel,
 		missionTitle: values.aboutMissionTitle,
 		missionBody: values.aboutMissionBody,
-		missionBodySecondary: values.aboutMissionBodySecondary,
 		imageId: values.aboutImageId,
 	},
 	location: {

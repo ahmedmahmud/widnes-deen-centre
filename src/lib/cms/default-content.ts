@@ -38,7 +38,6 @@ export const defaultPageContent: PageContent = {
 			"Widnes Deen Center is the body that helps the Widnes Islamic Centre to function.",
 		missionBody:
 			"The Associations role is to provide all manner of Islamic functions, events and general day-to-day running of the centre.",
-		missionBodySecondary: "",
 		imageId: SEED_MEDIA.prayerHall,
 	},
 	location: {
@@ -54,25 +53,21 @@ export const defaultPageContent: PageContent = {
 				id: "slide-1",
 				imageId: SEED_MEDIA.mainEntrance,
 				title: "Main Entrance",
-				figureLabel: "Fig. 01",
 			},
 			{
 				id: "slide-2",
 				imageId: SEED_MEDIA.prayerHall,
 				title: "Prayer Hall",
-				figureLabel: "Fig. 02",
 			},
 			{
 				id: "slide-3",
 				imageId: SEED_MEDIA.communitySpace,
 				title: "Community Space",
-				figureLabel: "Fig. 03",
 			},
 			{
 				id: "slide-4",
 				imageId: SEED_MEDIA.courtyard,
 				title: "Courtyard",
-				figureLabel: "Fig. 04",
 			},
 		],
 	},

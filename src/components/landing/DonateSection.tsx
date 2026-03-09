@@ -14,9 +14,9 @@ export function DonateSection({ content }: DonateSectionProps) {
           backgroundSize: "30px 30px",
         }}
       ></div>
-      <div className="max-w-5xl mx-auto bg-sand p-8 md:p-16 relative block-shadow z-10">
-        <div className="absolute -top-5 -left-5 bg-clay text-white px-6 py-3 shadow-md transform -rotate-1">
-          <span className="font-mono font-bold uppercase tracking-wider text-sm">
+      <div className="max-w-5xl mx-auto bg-sand p-6 sm:p-8 md:p-16 relative block-shadow z-10">
+        <div className="bg-clay text-white px-4 py-2 sm:px-6 sm:py-3 shadow-md transform -rotate-1 mb-6 sm:mb-0 sm:absolute sm:-top-5 sm:-left-5 w-max">
+          <span className="font-mono font-bold uppercase tracking-wider text-xs sm:text-sm">
             Support Us
           </span>
         </div>

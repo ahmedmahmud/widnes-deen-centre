@@ -14,28 +14,24 @@ const fallbackSlides: Slide[] = [
     id: "fallback-1",
     imageId: "",
     title: "Main Entrance",
-    figureLabel: "Fig. 01",
     imageUrl: "/uploads/seed-main-entrance.png",
   },
   {
     id: "fallback-2",
     imageId: "",
     title: "Prayer Hall",
-    figureLabel: "Fig. 02",
     imageUrl: "/uploads/seed-prayer-hall.png",
   },
   {
     id: "fallback-3",
     imageId: "",
     title: "Community Space",
-    figureLabel: "Fig. 03",
     imageUrl: "/uploads/seed-community-space.png",
   },
   {
     id: "fallback-4",
     imageId: "",
     title: "Courtyard",
-    figureLabel: "Fig. 04",
     imageUrl: "/uploads/seed-courtyard.png",
   },
 ];
@@ -127,53 +123,43 @@ export function LocationSection({ content }: LocationSectionProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-forest/80 via-transparent to-transparent opacity-60 pointer-events-none"></div>
             </div>
-            {/* Bottom bar with controls — outside overflow-hidden so z-index works globally */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-sand z-30 flex justify-between items-end border-t border-sand/20 backdrop-blur-sm bg-forest/20">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-widest mb-2 border-l-2 border-clay pl-3">
-                  {activeSlide?.figureLabel ?? ""}
-                </p>
-                <h3 className="font-serif text-2xl sm:text-3xl">
-                  {activeSlide?.title ?? ""}
-                </h3>
-              </div>
-              <div className="flex items-center gap-4 sm:gap-6 bg-sand px-4 py-2 text-forest shadow-lg">
-                <div className="font-mono text-sm font-bold">
-                  <span className="text-clay">
-                    {String(currentIndex + 1).padStart(2, "0")}
-                  </span>{" "}
-                  / {slides.length}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      goToPrev();
-                    }}
-                    aria-label="Previous slide"
-                    className="w-10 h-10 border border-forest/20 flex items-center justify-center hover:bg-forest hover:text-sand transition-colors text-forest cursor-pointer select-none relative z-40"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_back
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      goToNext();
-                    }}
-                    aria-label="Next slide"
-                    className="w-10 h-10 border border-forest/20 flex items-center justify-center hover:bg-forest hover:text-sand transition-colors text-forest cursor-pointer select-none relative z-40"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_forward
-                    </span>
-                  </button>
-                </div>
+            {/* Bottom bar with controls */}
+            <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 sm:px-8 sm:py-4 border-t border-sand/20 backdrop-blur-sm bg-forest/40">
+              <h3 className="font-serif text-lg sm:text-2xl text-sand truncate mr-3">
+                {activeSlide?.title ?? ""}
+              </h3>
+              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <span className="font-mono text-xs sm:text-sm font-bold text-sand whitespace-nowrap">
+                  <span className="text-clay">{currentIndex + 1}</span>/{slides.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    goToPrev();
+                  }}
+                  aria-label="Previous slide"
+                  className="w-8 h-8 sm:w-10 sm:h-10 border border-sand/30 flex items-center justify-center hover:bg-sand hover:text-forest transition-colors text-sand cursor-pointer select-none relative z-40"
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    arrow_back
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    goToNext();
+                  }}
+                  aria-label="Next slide"
+                  className="w-8 h-8 sm:w-10 sm:h-10 border border-sand/30 flex items-center justify-center hover:bg-sand hover:text-forest transition-colors text-sand cursor-pointer select-none relative z-40"
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    arrow_forward
+                  </span>
+                </button>
               </div>
             </div>
             <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 border-l-2 border-b-2 border-sand/20 z-20 hidden md:block pointer-events-none"></div>

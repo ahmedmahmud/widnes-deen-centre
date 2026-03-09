@@ -54,25 +54,23 @@ export function PrayerTimesSection({
             ) : null}
           </div>
         </div>
-        <div className="border-t-2 border-forest">
-          {/* Desktop: 6-column grid */}
-          <div className="hidden lg:grid lg:grid-cols-6 border-b-2 border-forest">
-            <PrayerTimeCard name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
-            <PrayerTimeCard name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
-            <PrayerTimeCard name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
-            <PrayerTimeCard name="Maghrib" label="Iqamah" time={maghribLabel} />
-            <PrayerTimeCard name="Isha" label="Iqamah" time={isha?.time ?? ""} />
-            <PrayerTimeCard name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
-          </div>
-          {/* Mobile/Tablet: compact 2-column or 3-column grid */}
-          <div className="lg:hidden grid grid-cols-2 sm:grid-cols-3 border-b-2 border-forest">
-            <PrayerTimeCardCompact name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
-            <PrayerTimeCardCompact name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
-            <PrayerTimeCardCompact name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
-            <PrayerTimeCardCompact name="Maghrib" label="Iqamah" time={maghribLabel} />
-            <PrayerTimeCardCompact name="Isha" label="Iqamah" time={isha?.time ?? ""} />
-            <PrayerTimeCardCompact name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
-          </div>
+        {/* Desktop: 6-column grid */}
+        <div className="hidden lg:grid lg:grid-cols-6 border-t-2 border-b-2 border-forest">
+          <PrayerTimeCard name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
+          <PrayerTimeCard name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
+          <PrayerTimeCard name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
+          <PrayerTimeCard name="Maghrib" label="Iqamah" time={maghribLabel} />
+          <PrayerTimeCard name="Isha" label="Iqamah" time={isha?.time ?? ""} />
+          <PrayerTimeCard name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
+        </div>
+        {/* Mobile/Tablet: compact 2-column or 3-column grid */}
+        <div className="lg:hidden grid grid-cols-2 sm:grid-cols-3 border-b-2 border-forest">
+          <PrayerTimeCardCompact name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
+          <PrayerTimeCardCompact name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
+          <PrayerTimeCardCompact name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
+          <PrayerTimeCardCompact name="Maghrib" label="Iqamah" time={maghribLabel} />
+          <PrayerTimeCardCompact name="Isha" label="Iqamah" time={isha?.time ?? ""} />
+          <PrayerTimeCardCompact name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
         </div>
       </div>
     </section>
