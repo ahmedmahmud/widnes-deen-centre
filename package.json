@@ -1,6 +1,5 @@
 {
-  "name": "widnes-mosque",
-  "private": true,
+  "name": "widnes-deen-centre",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
@@ -18,9 +17,11 @@
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
-    "seed:admin": "tsx scripts/seed-admin-plain.ts"
+    "seed": "bun run scripts/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1004.0",
+    "@aws-sdk/s3-request-presigner": "^3.1004.0",
     "@tailwindcss/vite": "^4.2.0",
     "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-router": "^1.132.0",

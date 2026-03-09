@@ -23,7 +23,7 @@ export function AboutSection({ content }: AboutSectionProps) {
               <span className="text-clay italic">{content.titleLineTwo}</span>
             </h2>
           </div>
-          <div className="absolute top-8 right-8 w-24 h-24 sm:w-32 sm:h-32 bg-forest rounded-full mix-blend-multiply opacity-80"></div>
+
         </div>
         <div className="p-8 lg:p-20 xl:p-24 flex flex-col justify-center relative bg-forest text-sand">
           <h3 className="font-mono text-clay text-xs sm:text-sm uppercase tracking-widest mb-10 font-bold bg-sand/10 inline-block px-4 py-2 w-max">

@@ -16,7 +16,7 @@ Build a single-page landing site for the local mosque with an authenticated `/ad
 - `src/routes/admin.tsx` is a protected CMS route (requires auth).
 - `src/routes/login.tsx` provides email/password login for admins.
 - Content is versioned in `page_versions` with published version tracking on `pages`.
-- Media is stored via a storage adapter interface; local filesystem is the current implementation.
+- Media is stored in S3-compatible object storage (RustFS). The `media-storage.ts` module handles uploads/deletes directly via `@aws-sdk/client-s3`.
 - Maghrib time is computed from a cached sunset API response + offset minutes.
 
 ## CMS Spec
@@ -41,8 +41,7 @@ Build a single-page landing site for the local mosque with an authenticated `/ad
 
 ## Key Paths
 - `src/lib/cms/` content types, default content, sunset logic, media helpers.
-- `src/lib/media-storage.ts` adapter interface.
-- `src/lib/media-storage-local.ts` local filesystem adapter.
+- `src/lib/media-storage.ts` S3-only storage module (RustFS, MinIO, AWS S3, R2, etc.). Exports `mediaStorage` with `upload()` and `delete()`.
 - `src/db/schema.ts` Drizzle schema for CMS + media + sunset cache.
 
 ## Critical Architecture Rules
@@ -62,5 +61,4 @@ This project uses TanStack Start with SSR. The bundler creates separate client a
 - Never define a plain async function in a route file that imports server modules — even if it's only called from the loader, the top-level import still leaks into the client.
 
 ## Notes
-- Replace local media adapter with S3 by implementing `MediaStorageAdapter`.
 - Replace static lat/long/timezone in `src/lib/server-fns.ts` (LATITUDE/LONGITUDE/LOCAL_TIMEZONE constants in `getLandingContentFn`) when needed.

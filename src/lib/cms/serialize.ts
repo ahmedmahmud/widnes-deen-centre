@@ -2,7 +2,6 @@ import type { PageContent } from "@/lib/cms/types";
 
 export type PageFormValues = {
 	heroBackgroundImageId: string | null;
-	heroEyebrow: string;
 	heroTitleLineOne: string;
 	heroTitleLineTwo: string;
 	heroTitleLineThree: string;
@@ -56,7 +55,6 @@ export const contentToFormValues = (
 	scheduleMediaId?: string | null,
 ): PageFormValues => ({
 	heroBackgroundImageId: content.hero.backgroundImageId ?? null,
-	heroEyebrow: content.hero.eyebrow,
 	heroTitleLineOne: content.hero.titleLineOne,
 	heroTitleLineTwo: content.hero.titleLineTwo,
 	heroTitleLineThree: content.hero.titleLineThree,
@@ -109,7 +107,6 @@ export const contentToFormValues = (
 
 export const formValuesToContent = (values: PageFormValues): PageContent => ({
 	hero: {
-		eyebrow: values.heroEyebrow,
 		titleLineOne: values.heroTitleLineOne,
 		titleLineTwo: values.heroTitleLineTwo,
 		titleLineThree: values.heroTitleLineThree,

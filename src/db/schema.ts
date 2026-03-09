@@ -76,8 +76,6 @@ export const mediaItems = pgTable(
     sizeBytes: integer("size_bytes").notNull(),
     width: integer(),
     height: integer(),
-    altText: text("alt_text"),
-    caption: text(),
     status: mediaStatus().default("active").notNull(),
     createdByUserId: text("created_by_user_id"),
     createdAt: timestamp("created_at").defaultNow(),

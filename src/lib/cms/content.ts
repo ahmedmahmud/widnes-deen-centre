@@ -18,7 +18,7 @@ export type PageVersionBundle = {
 	content: PageContent;
 	jamaatTimes: JamaatTime[];
 	scheduleMediaId: string | null;
-	media: Record<string, { id: string; url: string; caption?: string | null }>;
+	media: Record<string, { id: string; url: string }>;
 };
 
 const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
@@ -28,46 +28,31 @@ const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
 	offsetMinutes: row.offsetMinutes ?? undefined,
 });
 
-const ensureLeadingSlash = (path: string) =>
-	path.startsWith("/") ? path : `/${path}`;
+/** Ensure a media URL is usable by the frontend.
+ *  - Full URLs (https://...) are returned as-is (S3/external storage).
+ *  - Relative paths get a leading slash (local storage).
+ */
+const resolveMediaUrl = (path: string) =>
+	path.startsWith("http://") || path.startsWith("https://")
+		? path
+		: path.startsWith("/")
+			? path
+			: `/${path}`;
 
-export async function ensureLandingPage() {
-	const existing = await db.query.pages.findFirst({
+/**
+ * Get the landing page row. Throws if it doesn't exist —
+ * run `bun run seed` to set up the database first.
+ */
+async function getLandingPage() {
+	const page = await db.query.pages.findFirst({
 		where: (table, { eq }) => eq(table.slug, LANDING_PAGE_SLUG),
 	});
-
-	if (existing) return existing;
-
-	const [created] = await db
-		.insert(pages)
-		.values({ slug: LANDING_PAGE_SLUG, title: "Landing" })
-		.returning();
-
-	const [version] = await db
-		.insert(pageVersions)
-		.values({
-			pageId: created.id,
-			label: "Initial",
-			content: defaultPageContent,
-		})
-		.returning();
-
-	await db.insert(jamaatTimes).values(
-		defaultPageContent.jamaatTimes.map((time) => ({
-			versionId: version.id,
-			name: time.name,
-			kind: time.kind,
-			time: time.time ?? null,
-			offsetMinutes: time.offsetMinutes ?? null,
-		})),
-	);
-
-	await db
-		.update(pages)
-		.set({ publishedVersionId: version.id })
-		.where(eq(pages.id, created.id));
-
-	return created;
+	if (!page) {
+		throw new Error(
+			`Landing page not found (slug="${LANDING_PAGE_SLUG}"). Run "bun run seed" first.`,
+		);
+	}
+	return page;
 }
 
 async function buildVersionBundle(
@@ -103,8 +88,7 @@ async function buildVersionBundle(
 	const media = mediaRows.reduce<PageVersionBundle["media"]>((acc, item) => {
 		acc[item.id] = {
 			id: item.id,
-			url: ensureLeadingSlash(item.storagePath),
-			caption: item.caption,
+			url: resolveMediaUrl(item.storagePath),
 		};
 		return acc;
 	}, {});
@@ -120,7 +104,7 @@ async function buildVersionBundle(
 }
 
 export async function getLatestPublishedLanding(): Promise<PageVersionBundle> {
-	const page = await ensureLandingPage();
+	const page = await getLandingPage();
 
 	const version = await db.query.pageVersions.findFirst({
 		where: (table, { eq }) => eq(table.id, page.publishedVersionId ?? ""),
@@ -130,7 +114,7 @@ export async function getLatestPublishedLanding(): Promise<PageVersionBundle> {
 }
 
 export async function getLatestDraftLanding(): Promise<PageVersionBundle> {
-	const page = await ensureLandingPage();
+	const page = await getLandingPage();
 	const version = await db.query.pageVersions.findFirst({
 		where: (table, { eq }) => eq(table.pageId, page.id),
 		orderBy: (table, { desc }) => [desc(table.createdAt)],
@@ -215,21 +199,6 @@ export async function archiveMedia(mediaId: string) {
 	await db
 		.update(mediaItems)
 		.set({ status: "archived" })
-		.where(eq(mediaItems.id, mediaId));
-}
-
-export async function updateMediaMeta({
-	mediaId,
-	altText,
-	caption,
-}: {
-	mediaId: string;
-	altText?: string | null;
-	caption?: string | null;
-}) {
-	await db
-		.update(mediaItems)
-		.set({ altText, caption, updatedAt: new Date() })
 		.where(eq(mediaItems.id, mediaId));
 }
 

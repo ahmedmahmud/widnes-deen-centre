@@ -2,7 +2,7 @@ import type { PageContent } from "@/lib/cms/types";
 
 export const hydrateMedia = <T extends PageContent>(
 	content: T,
-	media: Record<string, { id: string; url: string; caption?: string | null }>,
+	media: Record<string, { id: string; url: string }>,
 ) => {
 	const resolveUrl = (id?: string | null) =>
 		id && media[id] ? media[id].url : null;

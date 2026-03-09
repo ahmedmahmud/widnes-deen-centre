@@ -7,7 +7,6 @@ import {
   getAdminData,
   saveLandingFn,
   uploadMediaFn,
-  updateMediaMetaFn,
   deleteMediaFn,
 } from "@/lib/server-fns";
 
@@ -88,17 +87,23 @@ function AdminRoute() {
   const resolveMediaUrl = useCallback(
     (mediaId: string | null) => {
       if (!mediaId) return null;
+
+      const ensureUrl = (val: string) =>
+        val.startsWith("http://") || val.startsWith("https://")
+          ? val
+          : val.startsWith("/")
+            ? val
+            : `/${val}`;
+
       // Check version media first
       const fromVersion = data.landing.media[mediaId];
       if (fromVersion) {
-        const url = fromVersion.url;
-        return url.startsWith("/") ? url : `/${url}`;
+        return ensureUrl(fromVersion.url);
       }
       // Then check media items list
       const match = mediaItems.find((item) => item.id === mediaId);
       if (!match) return null;
-      const path = match.storagePath;
-      return path.startsWith("/") ? path : `/${path}`;
+      return ensureUrl(match.storagePath);
     },
     [data.landing.media, mediaItems],
   );
@@ -160,23 +165,22 @@ function AdminRoute() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* ── Header ── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
-          <div className="flex items-center gap-4">
-            <img
-              src="/logo-wdc.svg"
-              alt="Widnes Deen Centre"
-              className="h-12 md:h-14 w-auto"
-              style={{ filter: "brightness(0) sepia(1) saturate(5) hue-rotate(120deg) brightness(0.3)" }}
-            />
-            <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-forest/60">
-                Admin
-              </p>
-              <h1 className="text-3xl md:text-4xl font-serif text-forest">
-                Widnes Deen Centre CMS
-              </h1>
-            </div>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-widest text-forest/60">
+              Admin
+            </p>
+            <h1 className="text-3xl md:text-4xl font-serif text-forest">
+              Edit Page
+            </h1>
           </div>
           <div className="flex gap-3">
+            <a
+              href="/"
+              className="px-4 py-2 border border-forest/20 text-xs font-mono uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-base">arrow_back</span>
+              View Page
+            </a>
             <button
               type="button"
               onClick={() => setActiveTab("editor")}
@@ -206,12 +210,6 @@ function AdminRoute() {
           <form onSubmit={handleSave} className="space-y-12">
             {/* ═══════ Hero Section ═══════ */}
             <SectionCard title="Hero Section" description="The main banner visitors see first">
-              <TextInput
-                label="Eyebrow Label"
-                value={values.heroEyebrow}
-                onChange={(v) => updateField("heroEyebrow", v)}
-                hint="Small text above the main title"
-              />
               <TextInput
                 label="Title Line 1"
                 value={values.heroTitleLineOne}
@@ -468,7 +466,7 @@ function AdminRoute() {
                               values.locationSlides.filter((_, i) => i !== idx),
                             );
                           }}
-                          className="text-xs uppercase font-mono text-clay hover:text-clay-dark"
+                          className="text-xs uppercase font-mono text-clay hover:text-clay-dark hover:bg-red-500/10 px-2 py-1 rounded transition-colors"
                         >
                           Remove
                         </button>
@@ -636,7 +634,7 @@ function AdminRoute() {
                           values.footerMenuLinks.filter((_, i) => i !== idx),
                         )
                       }
-                      className="text-xs font-mono text-clay mb-2"
+                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors mb-2"
                     >
                       Remove
                     </button>
@@ -695,7 +693,7 @@ function AdminRoute() {
                           values.footerSocialLinks.filter((_, i) => i !== idx),
                         )
                       }
-                      className="text-xs font-mono text-clay mb-2"
+                      className="text-xs font-mono text-clay hover:bg-red-500/10 px-2 py-1 rounded transition-colors mb-2"
                     >
                       Remove
                     </button>
@@ -723,14 +721,6 @@ function AdminRoute() {
           <MediaManager
             items={mediaItems}
             onUpload={handleUpload}
-            onUpdate={async (mediaId, payload) => {
-              await updateMediaMetaFn({ data: { mediaId, ...payload } });
-              setMediaItems((prev) =>
-                prev.map((item) =>
-                  item.id === mediaId ? { ...item, ...payload } : item,
-                ),
-              );
-            }}
             onDelete={async (mediaId) => {
               await deleteMediaFn({ data: { mediaId } });
               setMediaItems((prev) => prev.filter((item) => item.id !== mediaId));
@@ -927,15 +917,10 @@ function ImagePickerField({
 function MediaManager({
   items,
   onUpload,
-  onUpdate,
   onDelete,
 }: {
   items: MediaItem[];
   onUpload: (file: File) => Promise<MediaItem>;
-  onUpdate: (
-    mediaId: string,
-    payload: { altText?: string | null; caption?: string | null },
-  ) => Promise<void>;
   onDelete: (mediaId: string) => Promise<void>;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -969,11 +954,20 @@ function MediaManager({
             type="file"
             accept="image/*,.pdf"
             onChange={handleFileChange}
-            className="font-mono text-sm"
+            className="hidden"
           />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="px-5 py-2.5 border border-forest/20 font-mono text-xs uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors disabled:opacity-60 flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">upload_file</span>
+            {uploading ? "Uploading..." : "Choose File"}
+          </button>
           {uploading && (
             <span className="font-mono text-xs text-forest/60">
-              Uploading...
+              Processing...
             </span>
           )}
         </div>
@@ -995,11 +989,13 @@ function MediaManager({
               {item.mimeType.startsWith("image/") ? (
                 <img
                   src={
-                    item.storagePath.startsWith("/")
+                    item.storagePath.startsWith("http")
                       ? item.storagePath
-                      : `/${item.storagePath}`
+                      : item.storagePath.startsWith("/")
+                        ? item.storagePath
+                        : `/${item.storagePath}`
                   }
-                  alt={item.altText ?? ""}
+                  alt={item.originalFilename}
                   className="w-full h-48 object-cover"
                 />
               ) : (
@@ -1013,16 +1009,6 @@ function MediaManager({
                 <div className="font-mono text-xs text-forest/60 truncate">
                   {item.originalFilename}
                 </div>
-                <TextInput
-                  label="Caption"
-                  value={item.caption ?? ""}
-                  onChange={(v) => onUpdate(item.id, { caption: v })}
-                />
-                <TextInput
-                  label="Alt Text"
-                  value={item.altText ?? ""}
-                  onChange={(v) => onUpdate(item.id, { altText: v })}
-                />
                 {deleteConfirm === item.id ? (
                   <div className="flex gap-2 items-center">
                     <span className="text-xs font-mono text-clay">
@@ -1040,7 +1026,7 @@ function MediaManager({
                         }
                         setDeleteConfirm(null);
                       }}
-                      className="text-xs uppercase font-mono text-sand bg-clay px-2 py-1"
+                      className="text-xs uppercase font-mono text-sand bg-clay px-2 py-1 hover:bg-red-600 transition-colors rounded"
                     >
                       Yes, Delete
                     </button>
@@ -1056,7 +1042,7 @@ function MediaManager({
                   <button
                     type="button"
                     onClick={() => setDeleteConfirm(item.id)}
-                    className="text-xs uppercase font-mono text-clay hover:text-clay-dark"
+                    className="text-xs uppercase font-mono text-clay hover:text-clay-dark hover:bg-red-500/10 px-2 py-1 rounded transition-colors"
                   >
                     Delete
                   </button>
@@ -1133,13 +1119,17 @@ function MediaPickerModal({
             type="file"
             accept="image/*,.pdf"
             onChange={handleFileChange}
-            className="font-mono text-sm"
+            className="hidden"
           />
-          {uploading && (
-            <span className="font-mono text-xs text-forest/60">
-              Uploading...
-            </span>
-          )}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="px-4 py-2 border border-forest/20 font-mono text-xs uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors disabled:opacity-60 flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">upload_file</span>
+            {uploading ? "Uploading..." : "Choose File"}
+          </button>
         </div>
 
         {items.length === 0 ? (
@@ -1160,11 +1150,13 @@ function MediaPickerModal({
                 {item.mimeType.startsWith("image/") ? (
                   <img
                     src={
-                      item.storagePath.startsWith("/")
+                      item.storagePath.startsWith("http")
                         ? item.storagePath
-                        : `/${item.storagePath}`
+                        : item.storagePath.startsWith("/")
+                          ? item.storagePath
+                          : `/${item.storagePath}`
                     }
-                    alt={item.altText ?? ""}
+                    alt={item.originalFilename}
                     className="w-full h-32 object-cover group-hover:opacity-80 transition-opacity"
                   />
                 ) : (

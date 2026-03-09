@@ -146,8 +146,6 @@ export const uploadMediaFn = createServerFn({ method: "POST" })
 
 		await ensureAdmin();
 
-		// Import local storage adapter to ensure it's configured
-		await import("@/lib/media-storage-local");
 		const { uploadMedia } = await import("@/lib/cms/media");
 
 		// Reconstruct File from base64
@@ -167,28 +165,6 @@ export const uploadMediaFn = createServerFn({ method: "POST" })
 	});
 
 /* ───────────── Media Update ───────────── */
-
-export const updateMediaMetaFn = createServerFn({ method: "POST" })
-	.inputValidator(
-		(d: unknown) =>
-			d as {
-				mediaId: string;
-				altText?: string | null;
-				caption?: string | null;
-			},
-	)
-	.handler(async ({ data }) => {
-		const { ensureAdmin } = await import("@/lib/admin-auth.server");
-		const { updateMediaMeta } = await import("@/lib/cms/content");
-
-		await ensureAdmin();
-		await updateMediaMeta({
-			mediaId: data.mediaId,
-			caption: data.caption ?? null,
-			altText: data.altText ?? null,
-		});
-		return { ok: true };
-	});
 
 /* ───────────── Media Delete ───────────── */
 
@@ -270,8 +246,8 @@ export const getLandingContentFn = createServerFn({ method: "GET" }).handler(
 		if (data.scheduleMediaId) {
 			const scheduleMedia = await getMediaById(data.scheduleMediaId);
 			if (scheduleMedia) {
-				const path = scheduleMedia.storagePath;
-				downloadHref = path.startsWith("/") ? path : `/${path}`;
+				// storagePath is a full URL for S3 storage
+				downloadHref = scheduleMedia.storagePath;
 			}
 		}
 

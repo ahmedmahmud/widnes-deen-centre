@@ -11,7 +11,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 		<section
 			id="hero"
 			suppressHydrationWarning
-			className="relative h-screen w-full flex flex-col justify-end bg-forest text-sand overflow-hidden"
+			className="relative h-screen w-full flex flex-col bg-forest text-sand overflow-hidden"
 		>
 			<div className="absolute inset-0 w-full h-full">
 				<img
@@ -23,12 +23,9 @@ export function HeroSection({ content }: HeroSectionProps) {
 				<div className="absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-forest/30"></div>
 				<div className="absolute inset-0 bg-forest/20 mix-blend-multiply"></div>
 			</div>
-			<div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-24 pb-16 sm:pb-20 lg:pb-24">
-				<div className="max-w-4xl">
-					<div className="inline-block bg-clay/90 text-sand px-4 py-1.5 mb-6 sm:mb-8 font-mono text-xs sm:text-sm uppercase tracking-widest border border-sand/20 backdrop-blur-md">
-						{content.eyebrow}
-					</div>
-					<h1 className="text-4xl sm:text-6xl lg:text-8xl xl:text-9xl font-black font-serif leading-[0.95] tracking-tight mb-6 sm:mb-8 text-cream drop-shadow-lg">
+		<div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-24 flex flex-col justify-center" style={{ paddingTop: "5rem", paddingBottom: "4rem", minHeight: "100%" }}>
+			<div className="max-w-4xl">
+				<h1 className="text-3xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif leading-[0.95] tracking-tight mb-6 sm:mb-8 text-cream drop-shadow-lg">
 						{content.titleLineOne}
 						<br />
 						<span className="text-sand/90 italic">{content.titleLineTwo}</span>

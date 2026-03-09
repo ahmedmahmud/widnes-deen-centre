@@ -2,8 +2,8 @@ import type { PageContent } from "@/lib/cms/types";
 
 /**
  * Well-known seed media IDs.
- * These match the UUIDs inserted by the seed script/SQL and the files
- * in public/uploads/seed-*.png.
+ * These match the UUIDs inserted by `scripts/seed.ts` into the
+ * `media_items` table and uploaded to S3 as placeholder SVGs.
  */
 export const SEED_MEDIA = {
 	mainEntrance: "a0000001-0000-0000-0000-000000000001",
@@ -14,7 +14,6 @@ export const SEED_MEDIA = {
 
 export const defaultPageContent: PageContent = {
 	hero: {
-		eyebrow: "Widnes Deen Centre",
 		titleLineOne: "Worship, Charity &",
 		titleLineTwo: "Community Welfare",
 		titleLineThree: "in Widnes",

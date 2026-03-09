@@ -20,6 +20,17 @@ export const Route = createRootRoute({
 		],
 		links: [
 			{
+				rel: "icon",
+				href: "/favicon.ico",
+				sizes: "48x48",
+			},
+			{
+				rel: "icon",
+				href: "/favicon.png",
+				type: "image/png",
+				sizes: "192x192",
+			},
+			{
 				rel: "stylesheet",
 				href: appCss,
 			},
@@ -31,7 +42,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" className="scroll-smooth scroll-pt-20">
 			<head>
 				<HeadContent />
 			</head>

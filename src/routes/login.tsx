@@ -14,7 +14,6 @@ export const Route = createFileRoute("/login" as never)({
 
 function LoginRoute() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,7 +24,7 @@ function LoginRoute() {
     setLoading(true);
 
     try {
-      const result = await loginFn({ data: { username, password } });
+      const result = await loginFn({ data: { username: "admin", password } });
       if (result.ok) {
         navigate({ to: "/admin" as never });
       } else {
@@ -48,19 +47,6 @@ function LoginRoute() {
           <h1 className="font-serif text-3xl text-forest">Admin Sign In</h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="flex flex-col gap-2">
-            <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
-              Username
-            </span>
-            <input
-              type="text"
-              name="username"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              className="border border-forest/20 px-4 py-2 bg-white/70"
-              required
-            />
-          </label>
           <label className="flex flex-col gap-2">
             <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
               Password

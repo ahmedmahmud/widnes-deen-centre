@@ -8,7 +8,6 @@ export type JamaatTime = {
 };
 
 export type HeroContent = {
-	eyebrow: string;
 	titleLineOne: string;
 	titleLineTwo: string;
 	titleLineThree: string;
@@ -81,8 +80,6 @@ export type MediaItem = {
 	storagePath: string;
 	mimeType: string;
 	sizeBytes: number;
-	altText: string | null;
-	caption: string | null;
 	status: "active" | "archived";
 	createdAt: string | Date | null;
 };
