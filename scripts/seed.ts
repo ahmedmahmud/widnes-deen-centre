@@ -181,11 +181,11 @@ for (const seed of SEEDS) {
     filename: seed.filename,
     mimeType: "image/svg+xml",
   });
-  console.log(`  Uploaded ${seed.filename} -> ${stored.publicUrl}`);
+  console.log(`  Uploaded ${seed.filename} -> ${stored.storagePath}`);
   mediaRows.push({
     id: seed.id,
     filename: seed.filename,
-    storagePath: stored.publicUrl,
+    storagePath: stored.storagePath,
     mimeType: "image/svg+xml",
     sizeBytes: stored.sizeBytes,
   });

@@ -28,16 +28,37 @@ const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
 	offsetMinutes: row.offsetMinutes ?? undefined,
 });
 
-/** Ensure a media URL is usable by the frontend.
- *  - Full URLs (https://...) are returned as-is (S3/external storage).
- *  - Relative paths get a leading slash (local storage).
+/**
+ * Turn a storagePath into a URL the browser can load.
+ *
+ * storagePath is an S3 key like "uploads/uuid-file.jpg".
+ * We proxy through Netlify at /media/<key> to avoid mixed-content
+ * issues (HTTPS site → HTTP S3 endpoint).
+ *
+ * Legacy full-URL storagePaths (http://…) are handled by extracting
+ * the key portion after the bucket name.
  */
-const resolveMediaUrl = (path: string) =>
-	path.startsWith("http://") || path.startsWith("https://")
-		? path
-		: path.startsWith("/")
-			? path
-			: `/${path}`;
+const resolveMediaUrl = (storagePath: string): string => {
+	// Already a proxy path
+	if (storagePath.startsWith("/media/")) return storagePath;
+
+	// Legacy full URL — extract the key after the bucket segment
+	if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
+		try {
+			const url = new URL(storagePath);
+			// pathname is like /widnes-deen-centre/uploads/uuid-file.jpg
+			const parts = url.pathname.split("/").filter(Boolean);
+			// Drop the bucket name (first segment), keep the rest
+			const key = parts.length > 1 ? parts.slice(1).join("/") : parts.join("/");
+			return `/media/${key}`;
+		} catch {
+			return storagePath;
+		}
+	}
+
+	// Plain S3 key — prepend proxy prefix
+	return `/media/${storagePath}`;
+};
 
 /**
  * Get the landing page row. Throws if it doesn't exist —

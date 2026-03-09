@@ -16,6 +16,7 @@ import { randomUUID } from "node:crypto";
 import {
 	CreateBucketCommand,
 	DeleteObjectCommand,
+	GetObjectCommand,
 	HeadBucketCommand,
 	PutBucketPolicyCommand,
 	PutObjectCommand,
@@ -149,6 +150,15 @@ export const mediaStorage = {
 			publicUrl: buildPublicUrl(key),
 			sizeBytes: file.buffer.length,
 		};
+	},
+
+	async getObject(key: string) {
+		const client = getClient();
+		const bucket = getBucket();
+		const response = await client.send(
+			new GetObjectCommand({ Bucket: bucket, Key: key }),
+		);
+		return response;
 	},
 
 	async delete(storagePath: string): Promise<void> {

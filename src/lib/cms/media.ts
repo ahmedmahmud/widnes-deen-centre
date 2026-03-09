@@ -20,7 +20,7 @@ export async function uploadMedia({ file, userId }: UploadInput) {
     .values({
       filename: file.name,
       originalFilename: file.name,
-      storagePath: stored.publicUrl,
+      storagePath: stored.storagePath,
       mimeType: file.type,
       sizeBytes: stored.sizeBytes,
       createdByUserId: userId,

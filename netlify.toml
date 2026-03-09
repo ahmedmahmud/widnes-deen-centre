@@ -1,3 +1,11 @@
 [build]
   command = "bun run build"
   publish = "dist/client"
+
+# Proxy S3 media through Netlify to avoid mixed-content (HTTPS site → HTTP S3).
+# Netlify makes the request server-side, so the browser only sees HTTPS.
+[[redirects]]
+  from = "/media/*"
+  to = "http://84.8.145.185:9000/widnes-deen-centre/:splat"
+  status = 200
+  force = true

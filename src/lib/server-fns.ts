@@ -246,8 +246,24 @@ export const getLandingContentFn = createServerFn({ method: "GET" }).handler(
 		if (data.scheduleMediaId) {
 			const scheduleMedia = await getMediaById(data.scheduleMediaId);
 			if (scheduleMedia) {
-				// storagePath is a full URL for S3 storage
-				downloadHref = scheduleMedia.storagePath;
+				// Route through the Netlify /media/ proxy to avoid mixed content
+				const path = scheduleMedia.storagePath;
+				if (path.startsWith("/media/")) {
+					downloadHref = path;
+				} else if (path.startsWith("http://") || path.startsWith("https://")) {
+					// Legacy full URL — extract key after bucket name
+					try {
+						const url = new URL(path);
+						const parts = url.pathname.split("/").filter(Boolean);
+						const key = parts.length > 1 ? parts.slice(1).join("/") : parts.join("/");
+						downloadHref = `/media/${key}`;
+					} catch {
+						downloadHref = path;
+					}
+				} else {
+					// Plain S3 key
+					downloadHref = `/media/${path}`;
+				}
 			}
 		}
 
