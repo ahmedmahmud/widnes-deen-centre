@@ -1,4 +1,5 @@
 import type { PageContent } from "@/lib/cms/types";
+import { RichTextRenderer } from "./RichTextRenderer";
 
 type FooterSectionProps = {
   content: PageContent["footer"];
@@ -9,14 +10,17 @@ export function FooterSection({ content }: FooterSectionProps) {
     <footer className="bg-forest-light text-sand pt-16 sm:pt-20 border-t-8 border-clay">
       <div className="grid grid-cols-1 md:grid-cols-3 border-b border-sand/10">
         <div className="p-8 sm:p-10 border-b md:border-b-0 border-sand/10 md:border-r">
-          <h2 className="text-3xl font-serif text-white mb-6">
-            {content.titleLineOne}
+          <h2 className="text-white mb-6 text-3xl font-serif leading-tight">
+            Widnes
             <br />
-            <span className="text-clay italic">{content.titleLineTwo}</span>
+            <span className="text-clay italic">Deen Centre</span>
           </h2>
-          <p className="font-mono text-xs leading-relaxed max-w-xs opacity-70 mb-8">
-            {content.blurb}
-          </p>
+          <RichTextRenderer
+            value={content.blurb}
+            className="max-w-xs opacity-70 mb-8"
+            paragraphClassName="font-mono text-xs leading-relaxed"
+            blockquoteClassName="font-serif text-sm italic leading-relaxed border-l-4 border-clay pl-4 mt-4"
+          />
           <div className="flex gap-4 text-white">
             {content.socialLinks.map((link) => (
               <a
@@ -73,22 +77,14 @@ export function FooterSection({ content }: FooterSectionProps) {
                   {content.contactPhone}
                 </a>
               ) : (
-                <span>{(content as any).contactEmail ?? ""}</span>
+                <span></span>
               )}
             </li>
           </ul>
         </div>
       </div>
       <div className="p-6 sm:p-8 flex flex-col md:flex-row justify-between items-center text-xs font-mono uppercase bg-forest-light text-sand/40">
-        <p>© 2025 Widnes Deen Centre</p>
-        <div className="flex gap-6 mt-4 md:mt-0">
-          <a className="hover:text-white" href="#">
-            Privacy
-          </a>
-          <a className="hover:text-white" href="#">
-            Terms
-          </a>
-        </div>
+        <p>&copy; 2026 Widnes Deen Centre</p>
       </div>
     </footer>
   );

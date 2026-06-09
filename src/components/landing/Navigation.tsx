@@ -25,9 +25,9 @@ export function Navigation() {
             className="flex items-center gap-3 px-6 sm:px-8 text-sand hover:opacity-80 transition-opacity"
           >
             <img
-              src="/logo-wdc.png"
+              src="/logo-wdc-banner-white.png"
               alt="Widnes Deen Centre"
-              className="h-10 sm:h-12 w-auto"
+              className="w-[220px] sm:w-[300px] md:w-[340px] h-auto"
             />
           </a>
           <div className="hidden md:flex flex-1 items-center justify-end space-x-12 px-8 lg:px-12">

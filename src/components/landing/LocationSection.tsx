@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import type { PageContent } from "@/lib/cms/types";
+import type { PageContent, RichTextNode } from "@/lib/cms/types";
 
 type Slide = PageContent["location"]["slides"][number] & {
   imageUrl?: string | null;
@@ -58,6 +58,7 @@ export function LocationSection({ content }: LocationSectionProps) {
   const activeSlide = slides[currentIndex];
   const activeImageUrl =
     activeSlide?.imageUrl || fallbackSlides[0].imageUrl || "";
+  const titleLines = content.title;
 
   return (
     <section className="bg-sand relative py-16 lg:py-32" id="find-us">
@@ -71,19 +72,22 @@ export function LocationSection({ content }: LocationSectionProps) {
               </span>
             </div>
             <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif text-forest mb-10 leading-[0.85]">
-              {content.titleLineOne}
-              <br />
-              <span className="text-clay italic pl-4 sm:pl-8">
-                {content.titleLineTwo}
-              </span>
+              {titleLines.map((line, lineIndex) => (
+                <span key={lineIndex}>
+                  {lineIndex > 0 ? <br /> : null}
+                  <span>
+                    {line.children.map((leaf, leafIndex) => (
+                      <RenderLeaf key={leafIndex} leaf={leaf} />
+                    ))}
+                  </span>
+                </span>
+              ))}
             </h2>
             <div className="bg-white p-8 sm:p-10 block-shadow border border-forest/10 mb-10">
               <p className="font-mono text-xs text-forest/50 uppercase tracking-widest mb-3">
                 Visit Us At
               </p>
               <p className="font-serif text-2xl sm:text-3xl lg:text-4xl text-forest leading-tight mb-8">
-                {content.addressTitle},
-                <br />
                 {content.addressLines.map((line) => (
                   <span key={line}>
                     {line}
@@ -170,4 +174,25 @@ export function LocationSection({ content }: LocationSectionProps) {
       </div>
     </section>
   );
+}
+
+function RenderLeaf({
+  leaf,
+}: {
+  leaf: RichTextNode["children"][number];
+}) {
+  let el: React.ReactNode = leaf.text;
+
+  if (leaf.bold) el = <strong>{el}</strong>;
+  if (leaf.italic) el = <em>{el}</em>;
+  if (leaf.underline) el = <u>{el}</u>;
+
+  const style: React.CSSProperties = {};
+  if (leaf.color) style.color = leaf.color;
+
+  if (Object.keys(style).length > 0) {
+    el = <span style={style}>{el}</span>;
+  }
+
+  return <>{el}</>;
 }

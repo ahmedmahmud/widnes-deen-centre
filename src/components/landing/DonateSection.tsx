@@ -1,10 +1,13 @@
-import type { PageContent } from "@/lib/cms/types";
+import type { PageContent, RichTextNode } from "@/lib/cms/types";
+import { RichTextRenderer } from "./RichTextRenderer";
 
 type DonateSectionProps = {
   content: PageContent["donate"];
 };
 
 export function DonateSection({ content }: DonateSectionProps) {
+	const headingLines = content.heading;
+
   return (
     <section className="bg-forest py-20 lg:py-24 px-4 relative overflow-hidden" id="donate">
       <div
@@ -23,13 +26,23 @@ export function DonateSection({ content }: DonateSectionProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             <h2 className="text-3xl md:text-5xl font-serif font-black mb-6 leading-none text-forest">
-              {content.headingLineOne}
-              <br />
-              <span className="text-clay">{content.headingLineTwo}</span>
+              {headingLines.map((line, lineIndex) => (
+                <span key={lineIndex}>
+                  {lineIndex > 0 ? <br /> : null}
+                  <span className={lineIndex === 1 ? "text-clay" : undefined}>
+                    {line.children.map((leaf, leafIndex) => (
+                      <RenderLeaf key={leafIndex} leaf={leaf} />
+                    ))}
+                  </span>
+                </span>
+              ))}
             </h2>
-            <p className="font-mono text-sm leading-relaxed mb-10 text-forest/80">
-              {content.body}
-            </p>
+            <RichTextRenderer
+              value={content.body}
+              className="mb-10 text-forest/80"
+              paragraphClassName="font-mono text-sm leading-relaxed mb-2 last:mb-0"
+              blockquoteClassName="font-serif text-lg italic leading-relaxed text-forest/70 border-l-4 border-clay pl-4 mt-4"
+            />
             <div className="bg-white border-2 border-forest/10 p-6 sm:p-8 shadow-sm">
               <h3 className="font-serif text-xl font-bold text-forest mb-6 border-b border-forest/10 pb-2">
                 Bank Transfer Details
@@ -60,12 +73,37 @@ export function DonateSection({ content }: DonateSectionProps) {
             <span className="material-symbols-outlined text-7xl sm:text-8xl text-sand/20 mb-4">
               brightness_2
             </span>
-            <p className="font-serif text-xl sm:text-2xl text-sand italic">
-              &quot;{content.quote}&quot;
-            </p>
+            <RichTextRenderer
+              value={content.quote}
+              className="w-full text-sand"
+              paragraphClassName="font-serif text-xl sm:text-2xl leading-relaxed text-sand"
+              blockquoteClassName="font-serif text-xl sm:text-2xl leading-relaxed text-sand"
+              h3ClassName="font-serif text-lg sm:text-xl italic text-sand/90"
+            />
           </div>
         </div>
       </div>
     </section>
   );
+}
+
+function RenderLeaf({
+  leaf,
+}: {
+  leaf: RichTextNode["children"][number];
+}) {
+  let el: React.ReactNode = leaf.text;
+
+  if (leaf.bold) el = <strong>{el}</strong>;
+  if (leaf.italic) el = <em>{el}</em>;
+  if (leaf.underline) el = <u>{el}</u>;
+
+  const style: React.CSSProperties = {};
+  if (leaf.color) style.color = leaf.color;
+
+  if (Object.keys(style).length > 0) {
+    el = <span style={style}>{el}</span>;
+  }
+
+  return <>{el}</>;
 }

@@ -3,7 +3,7 @@
  * Unified seed script for Widnes Deen Centre CMS.
  *
  * Sets up everything needed for a fresh deployment:
- *   1. Runs Drizzle migrations (creates/updates all DB tables)
+ *   1. Pushes Drizzle schema (creates/updates all DB tables)
  *   2. Creates the admin user
  *   3. Creates the landing page + initial version (if missing)
  *   4. Uploads placeholder images to S3 and seeds media rows
@@ -33,14 +33,14 @@ import { execSync } from "node:child_process";
 
 config({ path: [".env.local", ".env"] });
 
-/* ── Step 1: Run Drizzle migrations ── */
+/* ── Step 1: Push Drizzle schema ── */
 
-console.log("\n=== Step 1/5: Running database migrations ===\n");
+console.log("\n=== Step 1/5: Pushing database schema ===\n");
 try {
-  execSync("bunx drizzle-kit migrate", { stdio: "inherit" });
-  console.log("Migrations complete.");
+  execSync("bunx drizzle-kit push --force", { stdio: "inherit" });
+  console.log("Schema push complete.");
 } catch (err) {
-  console.error("Migration failed:", err);
+  console.error("Schema push failed:", err);
   process.exit(1);
 }
 
@@ -72,7 +72,7 @@ if (existingAdmin) {
 
 console.log("\n=== Step 3/5: Ensuring landing page exists ===\n");
 
-const { eq } = await import("drizzle-orm");
+const { eq, inArray } = await import("drizzle-orm");
 const { pages, pageVersions, jamaatTimes } = await import("../src/db/schema");
 const { defaultPageContent } = await import("../src/lib/cms/default-content");
 
@@ -85,43 +85,59 @@ const existingPage = await db.query.pages.findFirst({
 let landingPage: typeof existingPage;
 
 if (existingPage) {
-  console.log(`Landing page already exists (id: ${existingPage.id}) — skipping.`);
   landingPage = existingPage;
 } else {
   const [created] = await db
     .insert(pages)
     .values({ slug: LANDING_SLUG, title: "Landing" })
     .returning();
-
-  const [version] = await db
-    .insert(pageVersions)
-    .values({
-      pageId: created.id,
-      label: "Initial",
-      content: defaultPageContent,
-    })
-    .returning();
-
-  await db.insert(jamaatTimes).values(
-    defaultPageContent.jamaatTimes.map((time) => ({
-      versionId: version.id,
-      name: time.name,
-      kind: time.kind,
-      time: time.time ?? null,
-      offsetMinutes: time.offsetMinutes ?? null,
-    })),
-  );
-
-  await db
-    .update(pages)
-    .set({ publishedVersionId: version.id })
-    .where(eq(pages.id, created.id));
-
-  console.log(`Created landing page (id: ${created.id}) with initial version.`);
   landingPage = created;
 }
 
-console.log(`Landing page ready (id: ${landingPage!.id}).`);
+const previousVersions = await db.query.pageVersions.findMany({
+  where: (table, { eq }) => eq(table.pageId, landingPage!.id),
+});
+
+if (previousVersions.length > 0) {
+  const versionIds = previousVersions.map((version) => version.id);
+
+  await db
+    .update(pages)
+    .set({ publishedVersionId: null })
+    .where(eq(pages.id, landingPage!.id));
+
+  await db.delete(jamaatTimes).where(inArray(jamaatTimes.versionId, versionIds));
+  await db.delete(versionMedia).where(inArray(versionMedia.versionId, versionIds));
+  await db.delete(pageVersions).where(inArray(pageVersions.id, versionIds));
+
+  console.log(`Removed ${previousVersions.length} old landing version(s).`);
+}
+
+const [version] = await db
+  .insert(pageVersions)
+  .values({
+    pageId: landingPage!.id,
+    label: "Initial",
+    content: defaultPageContent,
+  })
+  .returning();
+
+await db.insert(jamaatTimes).values(
+  defaultPageContent.jamaatTimes.map((time) => ({
+    versionId: version.id,
+    name: time.name,
+    kind: time.kind,
+    time: time.time ?? null,
+    offsetMinutes: time.offsetMinutes ?? null,
+  })),
+);
+
+await db
+  .update(pages)
+  .set({ publishedVersionId: version.id })
+  .where(eq(pages.id, landingPage!.id));
+
+console.log(`Landing page reset with one fresh version (id: ${version.id}).`);
 
 /* ── Step 4: Upload placeholder images to S3 ── */
 

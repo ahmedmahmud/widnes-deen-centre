@@ -1,4 +1,4 @@
-import type { PageContent } from "@/lib/cms/types";
+import type { PageContent, RichTextNode } from "@/lib/cms/types";
 
 type HeroSectionProps = {
 	content: PageContent["hero"] & { backgroundUrl?: string | null };
@@ -7,6 +7,9 @@ type HeroSectionProps = {
 const fallbackHeroImage = "/uploads/seed-community-space.png";
 
 export function HeroSection({ content }: HeroSectionProps) {
+	const titleLines = content.content.filter((node) => node.type !== "blockquote");
+	const subtitleLines = content.content.filter((node) => node.type === "blockquote");
+
 	return (
 		<section
 			id="hero"
@@ -23,18 +26,37 @@ export function HeroSection({ content }: HeroSectionProps) {
 				<div className="absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-forest/30"></div>
 				<div className="absolute inset-0 bg-forest/20 mix-blend-multiply"></div>
 			</div>
-		<div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-24 flex flex-col justify-center" style={{ paddingTop: "5rem", paddingBottom: "4rem", minHeight: "100%" }}>
-			<div className="max-w-4xl">
-				<h1 className="text-3xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif leading-[0.95] tracking-tight mb-6 sm:mb-8 text-cream drop-shadow-lg">
-						{content.titleLineOne}
-						<br />
-						<span className="text-sand/90 italic">{content.titleLineTwo}</span>
-						<br />
-						{content.titleLineThree}
+			<div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-24 flex flex-col justify-center" style={{ paddingTop: "5rem", paddingBottom: "4rem", minHeight: "100%" }}>
+				<div className="max-w-4xl">
+					<h1 className="text-3xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif leading-[0.95] tracking-tight text-cream drop-shadow-lg">
+						{titleLines.map((line, lineIndex) => (
+							<span key={lineIndex}>
+								{lineIndex > 0 ? <br /> : null}
+								{line.children.map((leaf, leafIndex) => (
+									<RenderLeaf
+										key={leafIndex}
+										leaf={leaf}
+										lineClassName={lineIndex === 1 ? "text-sand/90 italic" : undefined}
+									/>
+								))}
+							</span>
+						))}
 					</h1>
-					<p className="font-mono text-sm sm:text-base md:text-xl text-sand/80 max-w-xl leading-relaxed backdrop-blur-sm bg-forest/10 p-4 border-l-4 border-clay">
-						{content.subtitle}
-					</p>
+
+					{subtitleLines.length > 0 ? (
+						<div className="max-w-xl backdrop-blur-sm bg-forest/10 p-4 border-l-4 border-clay">
+							<p className="font-mono text-sm sm:text-base md:text-xl text-sand/80 leading-relaxed whitespace-pre-wrap">
+								{subtitleLines.map((line, lineIndex) => (
+									<span key={lineIndex}>
+										{lineIndex > 0 ? <br /> : null}
+										{line.children.map((leaf, leafIndex) => (
+											<RenderLeaf key={leafIndex} leaf={leaf} />
+										))}
+									</span>
+								))}
+							</p>
+						</div>
+					) : null}
 				</div>
 			</div>
 			<div className="absolute bottom-8 right-8 hidden lg:block z-10">
@@ -47,4 +69,31 @@ export function HeroSection({ content }: HeroSectionProps) {
 			</div>
 		</section>
 	);
+}
+
+function RenderLeaf({
+	leaf,
+	lineClassName,
+}: {
+	leaf: RichTextNode["children"][number];
+	lineClassName?: string;
+}) {
+	let el: React.ReactNode = leaf.text;
+
+	if (leaf.bold) el = <strong>{el}</strong>;
+	if (leaf.italic) el = <em>{el}</em>;
+	if (leaf.underline) el = <u>{el}</u>;
+
+	const style: React.CSSProperties = {};
+	if (leaf.color) style.color = leaf.color;
+
+	if (Object.keys(style).length > 0 || lineClassName) {
+		el = (
+			<span style={style} className={lineClassName}>
+				{el}
+			</span>
+		);
+	}
+
+	return <>{el}</>;
 }

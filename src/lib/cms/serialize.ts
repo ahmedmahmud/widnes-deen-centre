@@ -1,11 +1,8 @@
-import type { PageContent } from "@/lib/cms/types";
+import type { PageContent, RichText } from "@/lib/cms/types";
 
 export type PageFormValues = {
 	heroBackgroundImageId: string | null;
-	heroTitleLineOne: string;
-	heroTitleLineTwo: string;
-	heroTitleLineThree: string;
-	heroSubtitle: string;
+	heroContent: RichText;
 	jamaatFajr: string;
 	jamaatDhuhr: string;
 	jamaatAsr: string;
@@ -14,16 +11,11 @@ export type PageFormValues = {
 	jamaatJummah: string;
 	scheduleMediaId: string | null;
 	aboutHeadingLabel: string;
-	aboutTitleLineOne: string;
-	aboutTitleLineTwo: string;
-	aboutMissionLabel: string;
-	aboutMissionTitle: string;
-	aboutMissionBody: string;
+	aboutTitle: RichText;
+	aboutMissionContent: RichText;
 	aboutImageId: string | null;
 	locationHeadingLabel: string;
-	locationTitleLineOne: string;
-	locationTitleLineTwo: string;
-	locationAddressTitle: string;
+	locationTitle: RichText;
 	locationAddressLines: string;
 	locationParkingLabel: string;
 	locationMapLink: string;
@@ -32,16 +24,13 @@ export type PageFormValues = {
 		imageId: string;
 		title: string;
 	}[];
-	donateHeadingLineOne: string;
-	donateHeadingLineTwo: string;
-	donateBody: string;
+	donateHeading: RichText;
+	donateBody: RichText;
 	donateAccountName: string;
 	donateSortCode: string;
 	donateAccountNumber: string;
-	donateQuote: string;
-	footerTitleLineOne: string;
-	footerTitleLineTwo: string;
-	footerBlurb: string;
+	donateQuote: RichText;
+	footerBlurb: RichText;
 	footerMenuLinks: { label: string; href: string }[];
 	footerContactAddressLines: string;
 	footerContactPhone: string;
@@ -51,63 +40,51 @@ export type PageFormValues = {
 export const contentToFormValues = (
 	content: PageContent,
 	scheduleMediaId?: string | null,
-): PageFormValues => ({
-	heroBackgroundImageId: content.hero.backgroundImageId ?? null,
-	heroTitleLineOne: content.hero.titleLineOne,
-	heroTitleLineTwo: content.hero.titleLineTwo,
-	heroTitleLineThree: content.hero.titleLineThree,
-	heroSubtitle: content.hero.subtitle,
-	jamaatFajr:
-		content.jamaatTimes.find((time) => time.name === "fajr")?.time ?? "",
-	jamaatDhuhr:
-		content.jamaatTimes.find((time) => time.name === "dhuhr")?.time ?? "",
-	jamaatAsr:
-		content.jamaatTimes.find((time) => time.name === "asr")?.time ?? "",
-	jamaatMaghribOffset:
-		content.jamaatTimes.find((time) => time.name === "maghrib")
-			?.offsetMinutes ?? 0,
-	jamaatIsha:
-		content.jamaatTimes.find((time) => time.name === "isha")?.time ?? "",
-	jamaatJummah:
-		content.jamaatTimes.find((time) => time.name === "jummah")?.time ?? "",
-	scheduleMediaId: scheduleMediaId ?? null,
-	aboutHeadingLabel: content.about.headingLabel,
-	aboutTitleLineOne: content.about.titleLineOne,
-	aboutTitleLineTwo: content.about.titleLineTwo,
-	aboutMissionLabel: content.about.missionLabel,
-	aboutMissionTitle: content.about.missionTitle,
-	aboutMissionBody: content.about.missionBody,
-	aboutImageId: content.about.imageId ?? null,
-	locationHeadingLabel: content.location.headingLabel,
-	locationTitleLineOne: content.location.titleLineOne,
-	locationTitleLineTwo: content.location.titleLineTwo,
-	locationAddressTitle: content.location.addressTitle,
-	locationAddressLines: content.location.addressLines.join("\n"),
-	locationParkingLabel: content.location.parkingLabel,
-	locationMapLink: content.location.mapLink,
-	locationSlides: content.location.slides,
-	donateHeadingLineOne: content.donate.headingLineOne,
-	donateHeadingLineTwo: content.donate.headingLineTwo,
-	donateBody: content.donate.body,
-	donateAccountName: content.donate.accountName,
-	donateSortCode: content.donate.sortCode,
-	donateAccountNumber: content.donate.accountNumber,
-	donateQuote: content.donate.quote,
-	footerTitleLineOne: content.footer.titleLineOne,
-	footerTitleLineTwo: content.footer.titleLineTwo,
-	footerBlurb: content.footer.blurb,
-	footerMenuLinks: content.footer.menuLinks,
-	footerContactAddressLines: content.footer.contactAddressLines.join("\n"),
-	footerContactPhone: content.footer.contactPhone,
-	footerSocialLinks: content.footer.socialLinks,
-});
+): PageFormValues => {
+	return {
+		heroBackgroundImageId: content.hero.backgroundImageId ?? null,
+		heroContent: content.hero.content,
+		jamaatFajr:
+			content.jamaatTimes.find((time) => time.name === "fajr")?.time ?? "",
+		jamaatDhuhr:
+			content.jamaatTimes.find((time) => time.name === "dhuhr")?.time ?? "",
+		jamaatAsr:
+			content.jamaatTimes.find((time) => time.name === "asr")?.time ?? "",
+		jamaatMaghribOffset:
+			content.jamaatTimes.find((time) => time.name === "maghrib")
+				?.offsetMinutes ?? 0,
+		jamaatIsha:
+			content.jamaatTimes.find((time) => time.name === "isha")?.time ?? "",
+		jamaatJummah:
+			content.jamaatTimes.find((time) => time.name === "jummah")?.time ?? "",
+		scheduleMediaId: scheduleMediaId ?? null,
+		aboutHeadingLabel: content.about.headingLabel,
+		aboutTitle: content.about.title,
+		aboutMissionContent: content.about.missionContent,
+		aboutImageId: content.about.imageId ?? null,
+		locationHeadingLabel: content.location.headingLabel,
+		locationTitle: content.location.title,
+		locationAddressLines: content.location.addressLines.join("\n"),
+		locationParkingLabel: content.location.parkingLabel,
+		locationMapLink: content.location.mapLink,
+		locationSlides: content.location.slides,
+		donateHeading: content.donate.heading,
+		donateBody: content.donate.body,
+		donateAccountName: content.donate.accountName,
+		donateSortCode: content.donate.sortCode,
+		donateAccountNumber: content.donate.accountNumber,
+		donateQuote: content.donate.quote,
+		footerBlurb: content.footer.blurb,
+		footerMenuLinks: content.footer.menuLinks,
+		footerContactAddressLines: content.footer.contactAddressLines.join("\n"),
+		footerContactPhone: content.footer.contactPhone,
+		footerSocialLinks: content.footer.socialLinks,
+	};
+};
 
 export const formValuesToContent = (values: PageFormValues): PageContent => ({
 	hero: {
-		titleLineOne: values.heroTitleLineOne,
-		titleLineTwo: values.heroTitleLineTwo,
-		titleLineThree: values.heroTitleLineThree,
-		subtitle: values.heroSubtitle,
+		content: values.heroContent,
 		backgroundImageId: values.heroBackgroundImageId,
 	},
 	jamaatTimes: [
@@ -124,18 +101,13 @@ export const formValuesToContent = (values: PageFormValues): PageContent => ({
 	],
 	about: {
 		headingLabel: values.aboutHeadingLabel,
-		titleLineOne: values.aboutTitleLineOne,
-		titleLineTwo: values.aboutTitleLineTwo,
-		missionLabel: values.aboutMissionLabel,
-		missionTitle: values.aboutMissionTitle,
-		missionBody: values.aboutMissionBody,
+		title: values.aboutTitle,
+		missionContent: values.aboutMissionContent,
 		imageId: values.aboutImageId,
 	},
 	location: {
 		headingLabel: values.locationHeadingLabel,
-		titleLineOne: values.locationTitleLineOne,
-		titleLineTwo: values.locationTitleLineTwo,
-		addressTitle: values.locationAddressTitle,
+		title: values.locationTitle,
 		addressLines: values.locationAddressLines
 			.split("\n")
 			.map((line) => line.trim())
@@ -145,8 +117,7 @@ export const formValuesToContent = (values: PageFormValues): PageContent => ({
 		slides: values.locationSlides,
 	},
 	donate: {
-		headingLineOne: values.donateHeadingLineOne,
-		headingLineTwo: values.donateHeadingLineTwo,
+		heading: values.donateHeading,
 		body: values.donateBody,
 		accountName: values.donateAccountName,
 		sortCode: values.donateSortCode,
@@ -154,8 +125,6 @@ export const formValuesToContent = (values: PageFormValues): PageContent => ({
 		quote: values.donateQuote,
 	},
 	footer: {
-		titleLineOne: values.footerTitleLineOne,
-		titleLineTwo: values.footerTitleLineTwo,
 		blurb: values.footerBlurb,
 		menuLinks: values.footerMenuLinks,
 		contactAddressLines: values.footerContactAddressLines

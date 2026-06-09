@@ -2,6 +2,7 @@ import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { contentToFormValues, type PageFormValues } from "@/lib/cms/serialize";
 import type { MediaItem } from "@/lib/cms/types";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import {
   ensureAdminSession,
   getAdminData,
@@ -65,17 +66,21 @@ function AdminRoute() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [pickerTarget, setPickerTarget] = useState<string | null>(null);
+  const initialValuesJson = useMemo(() => JSON.stringify(initialValues), [initialValues]);
+  const [savedValuesJson, setSavedValuesJson] = useState(initialValuesJson);
+  const valuesJson = useMemo(() => JSON.stringify(values), [values]);
+  const isDirty = valuesJson !== savedValuesJson;
 
-  // Dirty state: compare current values to initial (from DB)
-  const isDirty = useMemo(
-    () => JSON.stringify(values) !== JSON.stringify(initialValues),
-    [values, initialValues],
+  const cloneValues = useCallback(
+    (nextValues: PageFormValues): PageFormValues =>
+      JSON.parse(JSON.stringify(nextValues)) as PageFormValues,
+    [],
   );
 
-  // Sync state when loader data changes (e.g. after router.invalidate())
   useEffect(() => {
-    setValues(contentToFormValues(data.landing.content, data.landing.scheduleMediaId));
-  }, [data.landing.content, data.landing.scheduleMediaId]);
+    setValues(initialValues);
+    setSavedValuesJson(initialValuesJson);
+  }, [initialValues, initialValuesJson]);
 
   useEffect(() => {
     setMediaItems(data.media as MediaItem[]);
@@ -133,13 +138,16 @@ function AdminRoute() {
     event?.preventDefault();
     setSaveState("saving");
     try {
+      const snapshot = cloneValues(values);
+      const nextSavedValuesJson = JSON.stringify(snapshot);
       await saveLandingFn({
-        data: { pageId: data.landing.pageId, values },
+        data: { pageId: data.landing.pageId, values: snapshot },
       });
+      setValues(snapshot);
+      setSavedValuesJson(nextSavedValuesJson);
       setSaveState("saved");
-      // Reload loader data so state reflects what was saved
-      await router.invalidate();
-      setTimeout(() => setSaveState("idle"), 2000);
+      void router.invalidate();
+      setTimeout(() => setSaveState("idle"), 900);
     } catch {
       setSaveState("error");
     }
@@ -214,28 +222,16 @@ function AdminRoute() {
 
         {activeTab === "editor" ? (
           <form onSubmit={handleSave} className="space-y-12 pb-24">
+            <fieldset disabled={saveState === "saving"} className="space-y-12 disabled:opacity-60 disabled:cursor-not-allowed">
             {/* ═══════ Hero Section ═══════ */}
             <SectionCard title="Hero Section" description="The main banner visitors see first">
-              <TextInput
-                label="Title Line 1"
-                value={values.heroTitleLineOne}
-                onChange={(v) => updateField("heroTitleLineOne", v)}
-              />
-              <TextInput
-                label="Title Line 2 (italic)"
-                value={values.heroTitleLineTwo}
-                onChange={(v) => updateField("heroTitleLineTwo", v)}
-              />
-              <TextInput
-                label="Title Line 3"
-                value={values.heroTitleLineThree}
-                onChange={(v) => updateField("heroTitleLineThree", v)}
-              />
-              <TextArea
-                label="Subtitle"
-                value={values.heroSubtitle}
-                onChange={(v) => updateField("heroSubtitle", v)}
-                hint="Description paragraph below the title"
+              <RichTextEditor
+                label="Hero Content"
+                value={values.heroContent}
+                onChange={(v) => updateField("heroContent", v)}
+                disabled={saveState === "saving"}
+                hint="Use normal text for title lines, then mark subtitle lines as Sub from the style dropdown."
+                minHeight={140}
               />
               <ImagePickerField
                 label="Background Image"
@@ -316,35 +312,23 @@ function AdminRoute() {
                 value={values.aboutHeadingLabel}
                 onChange={(v) => updateField("aboutHeadingLabel", v)}
                 hint='e.g. "// The Mission"'
+                disabled={saveState === "saving"}
               />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextInput
-                  label="Title Line 1"
-                  value={values.aboutTitleLineOne}
-                  onChange={(v) => updateField("aboutTitleLineOne", v)}
-                />
-                <TextInput
-                  label="Title Line 2 (italic/accent)"
-                  value={values.aboutTitleLineTwo}
-                  onChange={(v) => updateField("aboutTitleLineTwo", v)}
-                />
-              </div>
-              <TextInput
-                label="Mission Number Label"
-                value={values.aboutMissionLabel}
-                onChange={(v) => updateField("aboutMissionLabel", v)}
-                hint='e.g. "01"'
+              <RichTextEditor
+                label="Section Title"
+                value={values.aboutTitle}
+                onChange={(v) => updateField("aboutTitle", v)}
+                disabled={saveState === "saving"}
+                hint="Big heading — use color for accent (e.g. 'OUR STORY' with 'STORY' in clay)"
+                minHeight={60}
               />
-              <TextArea
-                label="Mission Title"
-                value={values.aboutMissionTitle}
-                onChange={(v) => updateField("aboutMissionTitle", v)}
-                hint="Main statement about the centre"
-              />
-              <TextArea
-                label="Mission Body"
-                value={values.aboutMissionBody}
-                onChange={(v) => updateField("aboutMissionBody", v)}
+              <RichTextEditor
+                label="Mission Content"
+                value={values.aboutMissionContent}
+                onChange={(v) => updateField("aboutMissionContent", v)}
+                disabled={saveState === "saving"}
+                hint="Keep the main statement and the indented sub-line together. Use the `Sub` button for the indented subtitle style."
+                minHeight={150}
               />
 
               <ImagePickerField
@@ -363,23 +347,17 @@ function AdminRoute() {
                   label="Section Label"
                   value={values.locationHeadingLabel}
                   onChange={(v) => updateField("locationHeadingLabel", v)}
-                />
-                <TextInput
-                  label="Title Line 1"
-                  value={values.locationTitleLineOne}
-                  onChange={(v) => updateField("locationTitleLineOne", v)}
-                />
-                <TextInput
-                  label="Title Line 2 (italic/accent)"
-                  value={values.locationTitleLineTwo}
-                  onChange={(v) => updateField("locationTitleLineTwo", v)}
-                />
-                <TextInput
-                  label="Address Title"
-                  value={values.locationAddressTitle}
-                  onChange={(v) => updateField("locationAddressTitle", v)}
+                  disabled={saveState === "saving"}
                 />
               </div>
+              <RichTextEditor
+                label="Section Title"
+                value={values.locationTitle}
+                onChange={(v) => updateField("locationTitle", v)}
+                disabled={saveState === "saving"}
+                hint="Each paragraph is a new line — use italic/color for accent (e.g. 'US' in clay italic)"
+                minHeight={60}
+              />
               <TextArea
                 label="Address Lines"
                 value={values.locationAddressLines}
@@ -501,22 +479,20 @@ function AdminRoute() {
 
             {/* ═══════ Donate ═══════ */}
             <SectionCard title="Donate Section" description="Bank details and donation messaging">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextInput
-                  label="Heading Line 1"
-                  value={values.donateHeadingLineOne}
-                  onChange={(v) => updateField("donateHeadingLineOne", v)}
-                />
-                <TextInput
-                  label="Heading Line 2 (accent)"
-                  value={values.donateHeadingLineTwo}
-                  onChange={(v) => updateField("donateHeadingLineTwo", v)}
-                />
-              </div>
-              <TextArea
+              <RichTextEditor
+                label="Donate Heading"
+                value={values.donateHeading}
+                onChange={(v) => updateField("donateHeading", v)}
+                disabled={saveState === "saving"}
+                hint="Each paragraph is a new line — use color for accent (e.g. 'MATTERS' in clay)"
+                minHeight={60}
+              />
+              <RichTextEditor
                 label="Donation Body Text"
                 value={values.donateBody}
                 onChange={(v) => updateField("donateBody", v)}
+                disabled={saveState === "saving"}
+                hint="Supports bold, italic, and color formatting"
               />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <TextInput
@@ -535,32 +511,23 @@ function AdminRoute() {
                   onChange={(v) => updateField("donateAccountNumber", v)}
                 />
               </div>
-              <TextArea
+              <RichTextEditor
                 label="Inspirational Quote"
                 value={values.donateQuote}
                 onChange={(v) => updateField("donateQuote", v)}
-                hint="Displayed in the decorative panel"
+                disabled={saveState === "saving"}
+                hint="Use `Sub` for the quote line if you want it indented, then a normal text line for the citation."
               />
             </SectionCard>
 
             {/* ═══════ Footer ═══════ */}
             <SectionCard title="Footer" description="Site footer content and links">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextInput
-                  label="Footer Title Line 1"
-                  value={values.footerTitleLineOne}
-                  onChange={(v) => updateField("footerTitleLineOne", v)}
-                />
-                <TextInput
-                  label="Footer Title Line 2 (italic)"
-                  value={values.footerTitleLineTwo}
-                  onChange={(v) => updateField("footerTitleLineTwo", v)}
-                />
-              </div>
-              <TextArea
+              <RichTextEditor
                 label="Footer Blurb"
                 value={values.footerBlurb}
                 onChange={(v) => updateField("footerBlurb", v)}
+                disabled={saveState === "saving"}
+                minHeight={80}
               />
               <TextArea
                 label="Contact Address"
@@ -692,6 +659,7 @@ function AdminRoute() {
                 ))}
               </div>
             </SectionCard>
+            </fieldset>
           </form>
         ) : (
           <MediaManager
@@ -713,6 +681,10 @@ function AdminRoute() {
               {saveState === "saved" ? (
                 <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-clay">
                   Saved successfully
+                </span>
+              ) : saveState === "saving" ? (
+                <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-sand">
+                  Saving changes...
                 </span>
               ) : saveState === "error" ? (
                 <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-clay">
@@ -783,11 +755,13 @@ function TextInput({
   value,
   onChange,
   hint,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   hint?: string;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col gap-1">
@@ -798,7 +772,8 @@ function TextInput({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest"
+        disabled={disabled}
+        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
@@ -811,10 +786,12 @@ function TimeInput({
   label,
   value,
   onChange,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col gap-1">
@@ -825,7 +802,8 @@ function TimeInput({
         type="time"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest"
+        disabled={disabled}
+        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </label>
   );
@@ -836,11 +814,13 @@ function TextArea({
   value,
   onChange,
   hint,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   hint?: string;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col gap-1">
@@ -850,7 +830,8 @@ function TextArea({
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest"
+        disabled={disabled}
+        className="border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>

@@ -7,21 +7,32 @@ export type JamaatTime = {
 	offsetMinutes?: number | null;
 };
 
+export type RichTextBlockType = "p" | "blockquote" | "h1" | "h2" | "h3";
+
+export type RichTextLeaf = {
+	text: string;
+	bold?: boolean;
+	italic?: boolean;
+	underline?: boolean;
+	color?: string | null;
+};
+
+export type RichTextNode = {
+	type?: RichTextBlockType;
+	children: RichTextLeaf[];
+};
+
+export type RichText = RichTextNode[];
+
 export type HeroContent = {
-	titleLineOne: string;
-	titleLineTwo: string;
-	titleLineThree: string;
-	subtitle: string;
+	content: RichText;
 	backgroundImageId?: string | null;
 };
 
 export type AboutContent = {
 	headingLabel: string;
-	titleLineOne: string;
-	titleLineTwo: string;
-	missionLabel: string;
-	missionTitle: string;
-	missionBody: string;
+	title: RichText;
+	missionContent: RichText;
 	imageId?: string | null;
 };
 
@@ -33,9 +44,7 @@ export type LocationSlide = {
 
 export type LocationContent = {
 	headingLabel: string;
-	titleLineOne: string;
-	titleLineTwo: string;
-	addressTitle: string;
+	title: RichText;
 	addressLines: string[];
 	parkingLabel: string;
 	mapLink: string;
@@ -43,19 +52,16 @@ export type LocationContent = {
 };
 
 export type DonateContent = {
-	headingLineOne: string;
-	headingLineTwo: string;
-	body: string;
+	heading: RichText;
+	body: RichText;
 	accountName: string;
 	sortCode: string;
 	accountNumber: string;
-	quote: string;
+	quote: RichText;
 };
 
 export type FooterContent = {
-	titleLineOne: string;
-	titleLineTwo: string;
-	blurb: string;
+	blurb: RichText;
 	menuLinks: { label: string; href: string }[];
 	contactAddressLines: string[];
 	contactPhone: string;

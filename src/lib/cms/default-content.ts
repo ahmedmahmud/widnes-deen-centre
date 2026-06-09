@@ -14,11 +14,22 @@ export const SEED_MEDIA = {
 
 export const defaultPageContent: PageContent = {
 	hero: {
-		titleLineOne: "Worship, Charity &",
-		titleLineTwo: "Community Welfare",
-		titleLineThree: "in Widnes",
-		subtitle:
-			"A spiritual sanctuary and community hub serving the heart of Halton.",
+		content: [
+			{ type: "p", children: [{ text: "Worship, Charity &" }] },
+			{
+				type: "p",
+				children: [{ text: "Community Welfare", italic: true }],
+			},
+			{ type: "p", children: [{ text: "in Widnes" }] },
+			{
+				type: "blockquote",
+				children: [
+					{
+						text: "A spiritual sanctuary and community hub serving the heart of Halton.",
+					},
+				],
+			},
+		],
 		backgroundImageId: SEED_MEDIA.communitySpace,
 	},
 	jamaatTimes: [
@@ -31,23 +42,58 @@ export const defaultPageContent: PageContent = {
 	],
 	about: {
 		headingLabel: "// The Mission",
-		titleLineOne: "OUR",
-		titleLineTwo: "STORY",
-		missionLabel: "01",
-		missionTitle:
-			"Widnes Deen Center is the body that helps the Widnes Islamic Centre to function.",
-		missionBody:
-			"The Associations role is to provide all manner of Islamic functions, events and general day-to-day running of the centre.",
+		title: [
+			{
+				type: "p",
+				children: [
+					{ text: "ABOUT " },
+					{ text: "US", color: "#c25e40", italic: true },
+				],
+			},
+		],
+		missionContent: [
+			{
+				type: "p",
+				children: [
+					{
+						text: "Widnes Deen Center is the body that helps the Widnes Islamic Centre to function.",
+					},
+				],
+			},
+			{
+				type: "p",
+				children: [{ text: "" }],
+			},
+			{
+				type: "blockquote",
+				children: [
+					{
+						text: "The Associations role is to provide all manner of Islamic functions, events and general day-to-day running of the centre.",
+					},
+				],
+			},
+		],
 		imageId: SEED_MEDIA.prayerHall,
-	},
-	location: {
-		headingLabel: "Location",
-		titleLineOne: "FIND",
-		titleLineTwo: "US",
-		addressTitle: "Widnes Deen Centre",
-		addressLines: ["Widnes, UK"],
+		},
+		location: {
+			headingLabel: "Location",
+			title: [
+				{
+					type: "p",
+					children: [
+						{ text: "FIND " },
+						{ text: "US", italic: true, color: "#c25e40" },
+					],
+				},
+			],
+		addressLines: [
+			"Widnes Deen Centre",
+			"31-35 Alforde Street",
+			"Widnes",
+			"WA8 7TQ",
+		],
 		parkingLabel: "On-Site Parking Available",
-		mapLink: "https://maps.google.com",
+		mapLink: "https://maps.google.com/?q=31-35+Alforde+Street+Widnes+WA8+7TQ",
 		slides: [
 			{
 				id: "slide-1",
@@ -71,27 +117,69 @@ export const defaultPageContent: PageContent = {
 			},
 		],
 	},
-	donate: {
-		headingLineOne: "GENEROSITY",
-		headingLineTwo: "MATTERS",
-		body: "Your contributions help us maintain the centre and serve the community effectively.",
+		donate: {
+		heading: [
+			{ type: "p", children: [{ text: "GENEROSITY" }] },
+			{
+				type: "p",
+				children: [{ text: "MATTERS", color: "#c25e40" }],
+			},
+		],
+		body: [
+			{
+				type: "p",
+				children: [
+					{
+						text: "Your contributions help us maintain the centre and serve the community effectively.",
+					},
+				],
+			},
+		],
 		accountName: "Widnes Deen Center",
 		sortCode: "16-24-06",
 		accountNumber: "20374041",
-		quote: "Those who spend their wealth in charity...",
+		quote: [
+			{
+				type: "p",
+				children: [
+					{
+						text: '"Those who spend their wealth in charity day and night, secretly and openly — their reward is with their Lord."',
+						italic: true,
+					},
+				],
+			},
+			{
+				type: "p",
+				children: [
+					{
+						text: "Surah Al-Baqarah 2:274",
+					},
+				],
+			},
+		],
 	},
 	footer: {
-		titleLineOne: "Widnes",
-		titleLineTwo: "Deen Centre",
-		blurb: "Serving the community of Widnes with faith and dedication.",
+		blurb: [
+			{
+				type: "p",
+				children: [
+					{
+						text: "Serving the community of Widnes with faith and dedication.",
+					},
+				],
+			},
+		],
 		menuLinks: [
 			{ label: "Timings", href: "#prayer-times" },
-			{ label: "Events", href: "#" },
 			{ label: "About", href: "#about" },
 			{ label: "Contact", href: "#find-us" },
 		],
-		contactAddressLines: ["Widnes Deen Centre", "Widnes, UK"],
-		contactPhone: "0151 XXX XXXX",
+		contactAddressLines: [
+			"Widnes Deen Centre",
+			"31-35 Alforde Street",
+			"Widnes, WA8 7TQ",
+		],
+		contactPhone: "07401 417272",
 		socialLinks: [
 			{ label: "FB", href: "#" },
 			{ label: "TW", href: "#" },
