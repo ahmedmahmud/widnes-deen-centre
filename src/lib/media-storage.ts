@@ -141,7 +141,6 @@ export const mediaStorage = {
 				Key: key,
 				Body: file.buffer,
 				ContentType: file.mimeType,
-				ACL: "public-read",
 			}),
 		);
 
