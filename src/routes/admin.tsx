@@ -99,12 +99,10 @@ function AdminRoute() {
     (mediaId: string | null) => {
       if (!mediaId) return null;
 
-      const ensureUrl = (val: string) =>
-        val.startsWith("/media/")
-          ? val
-          : val.startsWith("http://") || val.startsWith("https://")
-            ? val
-            : `/media/${val.startsWith("/") ? val.slice(1) : val}`;
+      const ensureUrl = (val: string) => {
+        if (val.startsWith("http://") || val.startsWith("https://")) return val;
+        return `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${val.startsWith("/") ? val.slice(1) : val}`;
+      };
 
       // Check version media first
       const fromVersion = data.landing.media[mediaId];
@@ -978,9 +976,9 @@ function MediaManager({
               {item.mimeType.startsWith("image/") ? (
                 <img
                   src={
-                    item.storagePath.startsWith("/media/")
+                    item.storagePath.startsWith("http://") || item.storagePath.startsWith("https://")
                       ? item.storagePath
-                      : `/media/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
+                      : `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
                   }
                   alt={item.originalFilename}
                   className="w-full h-48 object-cover"
@@ -1137,9 +1135,9 @@ function MediaPickerModal({
                 {item.mimeType.startsWith("image/") ? (
                   <img
                     src={
-                      item.storagePath.startsWith("/media/")
+                      item.storagePath.startsWith("http://") || item.storagePath.startsWith("https://")
                         ? item.storagePath
-                        : `/media/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
+                        : `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
                     }
                     alt={item.originalFilename}
                     className="w-full h-32 object-cover group-hover:opacity-80 transition-opacity"

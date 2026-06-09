@@ -32,32 +32,23 @@ const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
  * Turn a storagePath into a URL the browser can load.
  *
  * storagePath is an S3 key like "uploads/uuid-file.jpg".
- * We proxy through Netlify at /media/<key> to avoid mixed-content
- * issues (HTTPS site → HTTP S3 endpoint).
- *
- * Legacy full-URL storagePaths (http://…) are handled by extracting
- * the key portion after the bucket name.
+ * We use the public URL if defined, otherwise construct it directly from the bucket.
  */
 const resolveMediaUrl = (storagePath: string): string => {
-	// Already a proxy path
-	if (storagePath.startsWith("/media/")) return storagePath;
-
-	// Legacy full URL — extract the key after the bucket segment
+	// Already a full URL
 	if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
-		try {
-			const url = new URL(storagePath);
-			// pathname is like /widnes-deen-centre/uploads/uuid-file.jpg
-			const parts = url.pathname.split("/").filter(Boolean);
-			// Drop the bucket name (first segment), keep the rest
-			const key = parts.length > 1 ? parts.slice(1).join("/") : parts.join("/");
-			return `/media/${key}`;
-		} catch {
-			return storagePath;
-		}
+		return storagePath;
 	}
 
-	// Plain S3 key — prepend proxy prefix
-	return `/media/${storagePath}`;
+	// For standard S3 keys, we point them directly to the new storage API.
+	// Ensure no leading slash in storage path.
+	const path = storagePath.startsWith("/") ? storagePath.slice(1) : storagePath;
+	
+	// Default to returning the constructed full public URL
+	const endpoint = process.env.S3_ENDPOINT || "https://t3.storageapi.dev";
+	const bucket = process.env.S3_BUCKET || "lightweight-duffel-4zvx9r";
+	const base = endpoint.endsWith("/") ? endpoint.slice(0, -1) : endpoint;
+	return `${base}/${bucket}/${path}`;
 };
 
 /**

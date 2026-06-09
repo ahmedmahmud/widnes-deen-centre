@@ -246,23 +246,15 @@ export const getLandingContentFn = createServerFn({ method: "GET" }).handler(
 		if (data.scheduleMediaId) {
 			const scheduleMedia = await getMediaById(data.scheduleMediaId);
 			if (scheduleMedia) {
-				// Route through the Netlify /media/ proxy to avoid mixed content
 				const path = scheduleMedia.storagePath;
-				if (path.startsWith("/media/")) {
+				if (path.startsWith("http://") || path.startsWith("https://")) {
 					downloadHref = path;
-				} else if (path.startsWith("http://") || path.startsWith("https://")) {
-					// Legacy full URL — extract key after bucket name
-					try {
-						const url = new URL(path);
-						const parts = url.pathname.split("/").filter(Boolean);
-						const key = parts.length > 1 ? parts.slice(1).join("/") : parts.join("/");
-						downloadHref = `/media/${key}`;
-					} catch {
-						downloadHref = path;
-					}
 				} else {
-					// Plain S3 key
-					downloadHref = `/media/${path}`;
+					const endpoint = process.env.S3_ENDPOINT || "https://t3.storageapi.dev";
+					const bucket = process.env.S3_BUCKET || "lightweight-duffel-4zvx9r";
+					const base = endpoint.endsWith("/") ? endpoint.slice(0, -1) : endpoint;
+					const key = path.startsWith("/") ? path.slice(1) : path;
+					downloadHref = `${base}/${bucket}/${key}`;
 				}
 			}
 		}
