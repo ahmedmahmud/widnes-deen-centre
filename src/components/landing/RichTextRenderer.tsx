@@ -9,6 +9,7 @@ type RichTextRendererProps = {
 	h1ClassName?: string;
 	h2ClassName?: string;
 	h3ClassName?: string;
+	noWrapper?: boolean;
 };
 
 export function RichTextRenderer({
@@ -19,6 +20,7 @@ export function RichTextRenderer({
 	h1ClassName,
 	h2ClassName,
 	h3ClassName,
+	noWrapper,
 }: RichTextRendererProps) {
 	const normalizedValue = normalizeRichText(value);
 	const rootClassName = [className].filter(Boolean).join(" ");
@@ -52,6 +54,7 @@ export function RichTextRenderer({
 					h1ClassName={h1Class}
 					h2ClassName={h2Class}
 					h3ClassName={h3Class}
+					noWrapper={noWrapper}
 				/>
 			))}
 		</div>
@@ -65,6 +68,7 @@ function RenderElement({
 	h1ClassName,
 	h2ClassName,
 	h3ClassName,
+	noWrapper,
 }: {
 	node: RichTextNode;
 	paragraphClassName?: string;
@@ -72,12 +76,15 @@ function RenderElement({
 	h1ClassName?: string;
 	h2ClassName?: string;
 	h3ClassName?: string;
+	noWrapper?: boolean;
 }) {
 	const children = node.children.map((child, i) => (
 		<RenderLeaf key={i} leaf={child} />
 	));
 	const hasVisibleText = node.children.some((child) => child.text.trim().length > 0);
 	const content = hasVisibleText ? children : "\u00A0";
+
+	if (noWrapper) return <>{content}</>;
 
 	const baseClass = !hasVisibleText ? "min-h-[1.5em]" : "";
 
