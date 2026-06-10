@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RichText } from "@/lib/cms/types";
 import { normalizeRichText } from "@/lib/cms/rich-text";
 import { Plate, PlateContent, usePlateEditor } from "platejs/react";
@@ -25,6 +25,14 @@ const BLOCK_TYPE_OPTIONS: Array<{ label: string; value: RichTextBlockType }> = [
 	{ label: "Subtitle", value: "blockquote" },
 ];
 
+const EDITOR_PLUGINS = [
+	BlockquotePlugin,
+	BoldPlugin,
+	ItalicPlugin,
+	UnderlinePlugin,
+	FontColorPlugin,
+];
+
 type RichTextBlockType = "p" | "blockquote";
 type MarkState = { bold: boolean; italic: boolean; underline: boolean };
 
@@ -48,7 +56,7 @@ export function RichTextEditor({
 	const onChangeRef = useRef(onChange);
 	onChangeRef.current = onChange;
 
-	const normalizedValue = normalizeRichText(value);
+	const normalizedValue = useMemo(() => normalizeRichText(value), [value]);
 	const [currentBlockType, setCurrentBlockType] = useState<RichTextBlockType>("p");
 	const [markState, setMarkState] = useState<MarkState>({
 		bold: false,
@@ -57,13 +65,8 @@ export function RichTextEditor({
 	});
 
 	const editor = usePlateEditor({
-		plugins: [
-			BlockquotePlugin,
-			BoldPlugin,
-			ItalicPlugin,
-			UnderlinePlugin,
-			FontColorPlugin,
-		],
+		id: label,
+		plugins: EDITOR_PLUGINS,
 		value: normalizedValue as any,
 	});
 
