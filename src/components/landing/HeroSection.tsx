@@ -41,7 +41,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 							<RichTextRenderer
 								value={subtitleLines}
 								paragraphClassName="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed m-0"
-								blockquoteClassName="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed m-0"
+								blockquoteClassName="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed m-0 border-none pl-0 italic-none"
 							/>
 						</div>
 					) : null}
@@ -57,31 +57,4 @@ export function HeroSection({ content }: HeroSectionProps) {
 			</div>
 		</section>
 	);
-}
-
-function RenderLeaf({
-	leaf,
-	lineClassName,
-}: {
-	leaf: RichTextNode["children"][number];
-	lineClassName?: string;
-}) {
-	let el: React.ReactNode = leaf.text;
-
-	if (leaf.bold) el = <strong>{el}</strong>;
-	if (leaf.italic) el = <em>{el}</em>;
-	if (leaf.underline) el = <u>{el}</u>;
-
-	const style: React.CSSProperties = {};
-	if (leaf.color) style.color = leaf.color;
-
-	if (Object.keys(style).length > 0 || lineClassName) {
-		el = (
-			<span style={style} className={lineClassName}>
-				{el}
-			</span>
-		);
-	}
-
-	return <>{el}</>;
 }
