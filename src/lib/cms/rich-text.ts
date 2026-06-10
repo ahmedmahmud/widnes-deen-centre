@@ -13,19 +13,24 @@ export const normalizeRichText = (value?: RichText | null): RichText => {
 		return [createRichTextNode()];
 	}
 
-	return value.map((node) => ({
-		type: node?.type ?? "p",
-		children:
-			Array.isArray(node?.children) && node.children.length > 0
-				? node.children.map((child) => ({
-						text: typeof child?.text === "string" ? child.text : "",
-						bold: child?.bold,
-						italic: child?.italic,
-						underline: child?.underline,
-						color: child?.color ?? undefined,
-					}))
-				: [{ text: "" }],
-	}));
+	return value.map((node) => {
+		const type = node?.type ?? "p";
+		const children = (Array.isArray(node?.children) && node.children.length > 0
+			? node.children
+			: [{ text: "" }]
+		).map((child) => {
+			const c: any = {
+				text: typeof child?.text === "string" ? child.text : "",
+			};
+			if (child?.bold) c.bold = true;
+			if (child?.italic) c.italic = true;
+			if (child?.underline) c.underline = true;
+			if (child?.color) c.color = child.color;
+			return c;
+		});
+
+		return { type, children };
+	});
 };
 
 /**

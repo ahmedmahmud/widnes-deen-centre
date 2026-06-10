@@ -1,4 +1,5 @@
 import type { PageContent, RichText } from "@/lib/cms/types";
+import { normalizeRichText } from "./rich-text";
 
 export type PageFormValues = {
 	heroBackgroundImageId: string | null;
@@ -43,7 +44,7 @@ export const contentToFormValues = (
 ): PageFormValues => {
 	return {
 		heroBackgroundImageId: content.hero.backgroundImageId ?? null,
-		heroContent: content.hero.content,
+		heroContent: normalizeRichText(content.hero.content),
 		jamaatFajr:
 			content.jamaatTimes.find((time) => time.name === "fajr")?.time ?? "",
 		jamaatDhuhr:
@@ -59,22 +60,22 @@ export const contentToFormValues = (
 			content.jamaatTimes.find((time) => time.name === "jummah")?.time ?? "",
 		scheduleMediaId: scheduleMediaId ?? null,
 		aboutHeadingLabel: content.about.headingLabel,
-		aboutTitle: content.about.title,
-		aboutMissionContent: content.about.missionContent,
+		aboutTitle: normalizeRichText(content.about.title),
+		aboutMissionContent: normalizeRichText(content.about.missionContent),
 		aboutImageId: content.about.imageId ?? null,
 		locationHeadingLabel: content.location.headingLabel,
-		locationTitle: content.location.title,
+		locationTitle: normalizeRichText(content.location.title),
 		locationAddressLines: content.location.addressLines.join("\n"),
 		locationParkingLabel: content.location.parkingLabel,
 		locationMapLink: content.location.mapLink,
 		locationSlides: content.location.slides,
-		donateHeading: content.donate.heading,
-		donateBody: content.donate.body,
+		donateHeading: normalizeRichText(content.donate.heading),
+		donateBody: normalizeRichText(content.donate.body),
 		donateAccountName: content.donate.accountName,
 		donateSortCode: content.donate.sortCode,
 		donateAccountNumber: content.donate.accountNumber,
-		donateQuote: content.donate.quote,
-		footerBlurb: content.footer.blurb,
+		donateQuote: normalizeRichText(content.donate.quote),
+		footerBlurb: normalizeRichText(content.footer.blurb),
 		footerMenuLinks: content.footer.menuLinks,
 		footerContactAddressLines: content.footer.contactAddressLines.join("\n"),
 		footerContactPhone: content.footer.contactPhone,
