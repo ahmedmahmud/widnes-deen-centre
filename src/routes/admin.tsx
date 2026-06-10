@@ -265,9 +265,10 @@ function AdminRoute() {
                     }
                     className="border border-forest/20 px-4 py-2 bg-white/70"
                   />
-                  <div className="flex flex-col">
-                    <span className="text-xs text-forest/40 font-mono">
-                      Current sunset: {(() => {
+                  <p className="text-xs text-forest/40 font-mono">
+                    Maghrib is auto-calculated from sunset time.
+                    <br />
+                    Today's sunset: <span className="text-forest/60">{(() => {
                         const date = new Date(data.sunsetUtc);
                         return new Intl.DateTimeFormat("en-GB", {
                           hour: "2-digit",
@@ -275,10 +276,8 @@ function AdminRoute() {
                           timeZone: "Europe/London",
                           hour12: false,
                         }).format(date);
-                      })()}
-                    </span>
-                    <span className="text-sm text-clay font-mono font-bold">
-                      Jamaat time: {(() => {
+                      })()}</span>
+                    {" "}→ Jamaat: <span className="text-clay font-bold">{(() => {
                         const date = new Date(new Date(data.sunsetUtc).getTime() + values.jamaatMaghribOffset * 60000);
                         return new Intl.DateTimeFormat("en-GB", {
                           hour: "2-digit",
@@ -286,9 +285,8 @@ function AdminRoute() {
                           timeZone: "Europe/London",
                           hour12: false,
                         }).format(date);
-                      })()}
-                    </span>
-                  </div>
+                      })()}</span>
+                  </p>
                 </div>
                 <TimeInput
                   label="Isha"
