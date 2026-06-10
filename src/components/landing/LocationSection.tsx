@@ -64,7 +64,7 @@ export function LocationSection({ content }: LocationSectionProps) {
     <section className="bg-sand relative py-16 lg:py-32" id="find-us">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-center">
-          <div className="lg:col-span-5 order-2 lg:order-1 relative z-10">
+          <div className="lg:col-span-5 order-1 lg:order-1 relative z-10">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-clay"></div>
               <span className="font-mono text-sm font-bold uppercase tracking-widest text-forest">
@@ -118,7 +118,7 @@ export function LocationSection({ content }: LocationSectionProps) {
               </span>
             </a>
           </div>
-          <div className="lg:col-span-7 order-1 lg:order-2 h-[420px] sm:h-[500px] lg:h-[700px] relative">
+          <div className="lg:col-span-7 order-2 lg:order-2 h-[420px] sm:h-[500px] lg:h-[700px] relative">
             <div className="absolute inset-0 bg-forest block-shadow overflow-hidden border border-forest/10">
               <img
                 alt={activeSlide?.title ?? ""}
