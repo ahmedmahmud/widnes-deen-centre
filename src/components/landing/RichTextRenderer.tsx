@@ -83,16 +83,16 @@ function RenderElement({
 
 	switch (node.type) {
 		case "h1":
-			return <h1 className={`${h1ClassName} ${baseClass} mb-4`}>{content}</h1>;
+			return <h1 className={`${h1ClassName} ${baseClass}`}>{content}</h1>;
 		case "h2":
-			return <h2 className={`${h2ClassName} ${baseClass} mb-3`}>{content}</h2>;
+			return <h2 className={`${h2ClassName} ${baseClass}`}>{content}</h2>;
 		case "h3":
-			return <h3 className={`${h3ClassName} ${baseClass} mb-2`}>{content}</h3>;
+			return <h3 className={`${h3ClassName} ${baseClass}`}>{content}</h3>;
 		case "blockquote":
-			return <blockquote className={`${blockquoteClassName} ${baseClass} mb-4`}>{content}</blockquote>;
+			return <blockquote className={`${blockquoteClassName} ${baseClass}`}>{content}</blockquote>;
 		case "p":
 		default:
-			return <p className={`${paragraphClassName} ${baseClass} mb-4`}>{content}</p>;
+			return <p className={`${paragraphClassName} ${baseClass}`}>{content}</p>;
 	}
 }
 
