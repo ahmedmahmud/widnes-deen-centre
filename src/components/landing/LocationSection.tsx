@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import type { PageContent, RichTextNode } from "@/lib/cms/types";
+import { RichTextRenderer } from "./RichTextRenderer";
 
 type Slide = PageContent["location"]["slides"][number] & {
   imageUrl?: string | null;
@@ -71,18 +72,13 @@ export function LocationSection({ content }: LocationSectionProps) {
                 {content.headingLabel}
               </span>
             </div>
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif text-forest mb-10 leading-[0.85]">
-              {titleLines.map((line, lineIndex) => (
-                <span key={lineIndex}>
-                  {lineIndex > 0 ? <br /> : null}
-                  <span>
-                    {line.children.map((leaf, leafIndex) => (
-                      <RenderLeaf key={leafIndex} leaf={leaf} />
-                    ))}
-                  </span>
-                </span>
-              ))}
-            </h2>
+            <RichTextRenderer
+              value={titleLines}
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif text-forest mb-10"
+              paragraphClassName="m-0 leading-[0.85]"
+              h1ClassName="m-0 leading-[0.85]"
+              h2ClassName="m-0 leading-[0.85]"
+            />
             <div className="bg-white p-8 sm:p-10 block-shadow border border-forest/10 mb-10">
               <p className="font-mono text-xs text-forest/50 uppercase tracking-widest mb-3">
                 Visit Us At

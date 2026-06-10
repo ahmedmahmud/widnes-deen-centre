@@ -1,4 +1,5 @@
 import type { PageContent, RichTextNode } from "@/lib/cms/types";
+import { RichTextRenderer } from "./RichTextRenderer";
 
 type HeroSectionProps = {
 	content: PageContent["hero"] & { backgroundUrl?: string | null };
@@ -28,41 +29,20 @@ export function HeroSection({ content }: HeroSectionProps) {
 			</div>
 			<div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-24 flex flex-col justify-center" style={{ paddingTop: "5rem", paddingBottom: "4rem", minHeight: "100%" }}>
 				<div className="max-w-4xl">
-					<div className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif leading-[0.95] tracking-tight text-cream drop-shadow-lg flex flex-col">
-						{titleLines.map((line, lineIndex) => {
-							const hasText = line.children.some((c) => c.text.trim().length > 0);
-							if (!hasText) return <div key={lineIndex} className="h-[0.5em]" />;
-
-							return (
-								<h1 key={lineIndex} className="m-0">
-									{line.children.map((leaf, leafIndex) => (
-										<RenderLeaf
-											key={leafIndex}
-											leaf={leaf}
-											lineClassName={lineIndex === 1 ? "text-sand/90 italic" : undefined}
-										/>
-									))}
-								</h1>
-							);
-						})}
-					</div>
+					<RichTextRenderer
+						value={titleLines}
+						className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif tracking-tight text-cream drop-shadow-lg"
+						paragraphClassName="m-0 leading-[0.95]"
+						h1ClassName="m-0 leading-[0.95]"
+					/>
 
 					{subtitleLines.length > 0 ? (
 						<div className="mt-8 max-w-xl backdrop-blur-sm bg-forest/10 p-4 border-l-4 border-clay">
-							<div className="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed whitespace-pre-wrap flex flex-col">
-								{subtitleLines.map((line, lineIndex) => {
-									const hasText = line.children.some((c) => c.text.trim().length > 0);
-									if (!hasText) return <div key={lineIndex} className="h-4" />;
-									
-									return (
-										<p key={lineIndex} className="m-0">
-											{line.children.map((leaf, leafIndex) => (
-												<RenderLeaf key={leafIndex} leaf={leaf} />
-											))}
-										</p>
-									);
-								})}
-							</div>
+							<RichTextRenderer
+								value={subtitleLines}
+								className="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed"
+								paragraphClassName="m-0"
+							/>
 						</div>
 					) : null}
 				</div>

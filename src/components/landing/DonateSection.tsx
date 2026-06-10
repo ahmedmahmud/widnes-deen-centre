@@ -25,18 +25,13 @@ export function DonateSection({ content }: DonateSectionProps) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
-            <h2 className="text-3xl md:text-5xl font-serif font-black mb-6 leading-none text-forest">
-              {headingLines.map((line, lineIndex) => (
-                <span key={lineIndex}>
-                  {lineIndex > 0 ? <br /> : null}
-                  <span className={lineIndex === 1 ? "text-clay" : undefined}>
-                    {line.children.map((leaf, leafIndex) => (
-                      <RenderLeaf key={leafIndex} leaf={leaf} />
-                    ))}
-                  </span>
-                </span>
-              ))}
-            </h2>
+            <RichTextRenderer
+              value={headingLines}
+              className="text-3xl md:text-5xl font-serif font-black mb-6 leading-none text-forest"
+              paragraphClassName="m-0"
+              h1ClassName="m-0"
+              h2ClassName="m-0"
+            />
             <RichTextRenderer
               value={content.body}
               className="mb-10 text-forest/80"
