@@ -6,8 +6,10 @@ dist-ssr
 .env
 .env.dev
 .env*.bak
+.nitro
 .tanstack
 .wrangler
+.output
 .netlify
 .vinxi
 __unconfig*
