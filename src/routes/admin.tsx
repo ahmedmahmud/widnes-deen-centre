@@ -180,35 +180,38 @@ function AdminRoute() {
               Edit Page
             </h1>
           </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
             <a
               href="/"
-              className="px-3 py-2 sm:px-4 border border-forest/20 text-xs font-mono uppercase tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors flex items-center gap-2"
+              className="px-2 py-2 sm:px-4 border border-forest/20 text-[10px] sm:text-xs font-mono uppercase tracking-tight sm:tracking-widest text-forest hover:bg-forest hover:text-sand transition-colors flex items-center justify-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
-              View Page
+              <span className="material-symbols-outlined text-sm sm:text-base">arrow_back</span>
+              <span className="hidden sm:inline">View Page</span>
+              <span className="sm:hidden">View</span>
             </a>
             <button
               type="button"
               onClick={() => setActiveTab("editor")}
-              className={`px-3 py-2 sm:px-4 border text-xs font-mono uppercase tracking-widest ${
+              className={`px-2 py-2 sm:px-4 border text-[10px] sm:text-xs font-mono uppercase tracking-tight sm:tracking-widest flex items-center justify-center ${
                 activeTab === "editor"
                   ? "bg-forest text-sand"
                   : "border-forest/20 text-forest"
               }`}
             >
-              Page Editor
+              <span className="hidden sm:inline">Page Editor</span>
+              <span className="sm:hidden">Editor</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("media")}
-              className={`px-3 py-2 sm:px-4 border text-xs font-mono uppercase tracking-widest ${
+              className={`px-2 py-2 sm:px-4 border text-[10px] sm:text-xs font-mono uppercase tracking-tight sm:tracking-widest flex items-center justify-center ${
                 activeTab === "media"
                   ? "bg-forest text-sand"
                   : "border-forest/20 text-forest"
               }`}
             >
-              Media Manager
+              <span className="hidden sm:inline">Media Manager</span>
+              <span className="sm:hidden">Media</span>
             </button>
           </div>
         </div>
