@@ -31,17 +31,17 @@ export function HeroSection({ content }: HeroSectionProps) {
 				<div className="max-w-4xl">
 					<RichTextRenderer
 						value={titleLines}
-						className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif tracking-tight text-cream drop-shadow-lg flex flex-col"
-						paragraphClassName="m-0 leading-[0.95]"
-						h1ClassName="m-0 leading-[0.95]"
+						className="drop-shadow-lg"
+						paragraphClassName="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif tracking-tight text-cream m-0 leading-[0.95]"
+						h1ClassName="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-serif tracking-tight text-cream m-0 leading-[0.95]"
 					/>
 
 					{subtitleLines.length > 0 ? (
 						<div className="mt-8 max-w-xl backdrop-blur-sm bg-forest/10 p-4 border-l-4 border-clay">
 							<RichTextRenderer
 								value={subtitleLines}
-								className="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed flex flex-col"
-								paragraphClassName="m-0"
+								paragraphClassName="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed m-0"
+								blockquoteClassName="font-mono text-xs sm:text-base md:text-xl text-sand/80 leading-relaxed m-0"
 							/>
 						</div>
 					) : null}
