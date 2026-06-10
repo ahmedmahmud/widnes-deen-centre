@@ -15,6 +15,15 @@ export default defineConfig({
       deployment: {
         preset: process.env.NITRO_PRESET || "railway",
       },
+      server: {
+        preset: process.env.NITRO_PRESET || "railway",
+        publicAssets: [
+          {
+            dir: "./dist/client",
+            maxAge: 31536000,
+          },
+        ],
+      },
     }),
     viteReact(),
     tailwindcss(),
