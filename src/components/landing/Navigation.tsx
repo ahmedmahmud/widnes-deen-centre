@@ -22,12 +22,12 @@ export function Navigation() {
         <div className="flex h-16 sm:h-20 items-stretch justify-between max-w-[1800px] mx-auto">
           <a
             href="#hero"
-            className="flex items-center gap-3 px-6 sm:px-8 text-sand hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 px-4 sm:px-8 text-sand hover:opacity-80 transition-opacity"
           >
             <img
               src="/logo-wdc-banner-white.png"
               alt="Widnes Deen Centre"
-              className="w-[220px] sm:w-[300px] md:w-[340px] h-auto"
+              className="w-[260px] sm:w-[300px] md:w-[340px] h-auto"
             />
           </a>
           <div className="hidden md:flex flex-1 items-center justify-end space-x-12 px-8 lg:px-12">

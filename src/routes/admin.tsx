@@ -169,7 +169,7 @@ function AdminRoute() {
 
   return (
     <div className="min-h-screen bg-sand text-plum">
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* ── Header ── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
           <div>
@@ -776,7 +776,7 @@ function TextInput({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex flex-col gap-1 w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
@@ -785,7 +785,7 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
@@ -806,7 +806,7 @@ function TimeInput({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex flex-col gap-1 w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
@@ -815,7 +815,7 @@ function TimeInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </label>
   );
@@ -835,7 +835,7 @@ function TextArea({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex flex-col gap-1 w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
@@ -843,7 +843,7 @@ function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
