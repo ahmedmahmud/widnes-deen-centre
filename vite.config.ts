@@ -13,10 +13,10 @@ export default defineConfig({
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tanstackStart({
       deployment: {
-        preset: process.env.NITRO_PRESET || "railway",
+        preset: process.env.NITRO_PRESET || "node-server",
       },
       server: {
-        preset: process.env.NITRO_PRESET || "railway",
+        preset: process.env.NITRO_PRESET || "node-server",
         publicAssets: [
           {
             dir: "./dist/client",
