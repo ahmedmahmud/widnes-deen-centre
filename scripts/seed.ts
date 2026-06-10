@@ -139,12 +139,47 @@ await db
 
 console.log(`Landing page reset with one fresh version (id: ${version.id}).`);
 
-/* ── Step 4: Upload placeholder images to S3 ── */
+/* ── Step 4: Cleanup and Upload placeholder images to S3 ── */
 
-console.log("\n=== Step 4/5: Uploading placeholder images to S3 ===\n");
+console.log("\n=== Step 4/5: Cleaning and uploading placeholder images to S3 ===\n");
 
 const { SEED_MEDIA } = await import("../src/lib/cms/default-content");
 const { mediaStorage } = await import("../src/lib/media-storage");
+const { ListObjectsV2Command, DeleteObjectsCommand } = await import("@aws-sdk/client-s3");
+
+// 1. Clear media tables in DB
+console.log("Cleaning media tables in database...");
+await db.delete(versionMedia);
+await db.delete(mediaItems);
+
+// 2. Clear S3 bucket (uploads/ prefix)
+console.log(`Cleaning S3 bucket: ${process.env.S3_BUCKET}...`);
+const { S3Client } = await import("@aws-sdk/client-s3");
+const s3Client = new S3Client({
+  endpoint: process.env.S3_ENDPOINT,
+  region: process.env.S3_REGION || "us-east-1",
+  forcePathStyle: true,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_KEY!,
+  },
+});
+
+const listResponse = await s3Client.send(new ListObjectsV2Command({
+  Bucket: process.env.S3_BUCKET,
+  Prefix: "uploads/",
+}));
+
+if (listResponse.Contents && listResponse.Contents.length > 0) {
+  const keys = listResponse.Contents.map(c => ({ Key: c.Key! }));
+  await s3Client.send(new DeleteObjectsCommand({
+    Bucket: process.env.S3_BUCKET,
+    Delete: { Objects: keys },
+  }));
+  console.log(`Deleted ${keys.length} objects from S3.`);
+} else {
+  console.log("S3 bucket already clean.");
+}
 
 function makePlaceholderSvg(label: string, hue: number): Uint8Array {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
@@ -191,23 +226,6 @@ const mediaRows: Array<{
 }> = [];
 
 for (const seed of SEEDS) {
-  // Check if media already exists in DB
-  const existing = await db.query.mediaItems.findFirst({
-    where: (table, { eq }) => eq(table.id, seed.id),
-  });
-
-  if (existing) {
-    console.log(`  Media "${seed.filename}" already exists — skipping S3 upload.`);
-    mediaRows.push({
-      id: seed.id,
-      filename: seed.filename,
-      storagePath: existing.storagePath,
-      mimeType: existing.mimeType,
-      sizeBytes: existing.sizeBytes,
-    });
-    continue;
-  }
-
   const buffer = makePlaceholderSvg(seed.label, seed.hue);
   const stored = await mediaStorage.upload({
     buffer,
@@ -237,19 +255,10 @@ for (const row of mediaRows) {
       mimeType: row.mimeType,
       sizeBytes: row.sizeBytes,
       status: "active",
-    })
-    .onConflictDoUpdate({
-      target: mediaItems.id,
-      set: {
-        filename: row.filename,
-        storagePath: row.storagePath,
-        mimeType: row.mimeType,
-        sizeBytes: row.sizeBytes,
-      },
     });
 }
 
-console.log(`Inserted/updated ${mediaRows.length} media items.`);
+console.log(`Inserted ${mediaRows.length} media items.`);
 
 /* ── Step 5: Link media to landing page versions ── */
 
