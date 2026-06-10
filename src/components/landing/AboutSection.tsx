@@ -21,9 +21,9 @@ export function AboutSection({ content }: AboutSectionProps) {
             <RichTextRenderer
               value={content.title}
               className="text-forest"
-              paragraphClassName="text-4xl sm:text-5xl lg:text-7xl font-serif leading-[0.8]"
-              h1ClassName="text-4xl sm:text-5xl lg:text-7xl font-serif font-black leading-[0.8]"
-              h2ClassName="text-4xl sm:text-5xl lg:text-7xl font-serif leading-[0.8]"
+              paragraphClassName="text-4xl sm:text-5xl lg:text-7xl font-serif leading-none"
+              h1ClassName="text-4xl sm:text-5xl lg:text-7xl font-serif font-black leading-none"
+              h2ClassName="text-4xl sm:text-5xl lg:text-7xl font-serif leading-none"
               h3ClassName="text-3xl sm:text-4xl lg:text-5xl font-serif leading-[0.9]"
               blockquoteClassName="text-2xl sm:text-3xl lg:text-5xl font-serif italic text-clay leading-[0.9] pl-4 border-l-4 border-clay mt-4"
             />
@@ -37,7 +37,7 @@ export function AboutSection({ content }: AboutSectionProps) {
             <RichTextRenderer
               value={content.missionContent}
               className="text-cream"
-              paragraphClassName="text-2xl sm:text-3xl md:text-4xl font-serif leading-tight"
+              paragraphClassName="text-2xl sm:text-3xl md:text-4xl font-serif leading-tight mb-6"
               h1ClassName="text-3xl sm:text-4xl md:text-5xl font-serif font-black leading-tight"
               h2ClassName="text-2xl sm:text-3xl md:text-4xl font-serif font-bold leading-tight"
               h3ClassName="text-xl sm:text-2xl md:text-3xl font-serif font-bold leading-tight text-clay"

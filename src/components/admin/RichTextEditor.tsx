@@ -272,7 +272,7 @@ export function RichTextEditor({
 							setCurrentBlockType(readCurrentBlockType());
 							setMarkState(readMarkState());
 						}}
-						className="px-3 py-3 text-forest outline-none [&_.slate-placeholder]:text-forest/30 [&_p]:font-mono [&_p]:text-sm [&_p]:leading-relaxed [&_p]:m-0 [&_p:empty]:min-h-[1.5em] [&_blockquote]:border-l-4 [&_blockquote]:border-clay [&_blockquote]:bg-clay/5 [&_blockquote]:px-3 [&_blockquote]:py-1 [&_blockquote]:font-mono [&_blockquote]:text-sm [&_blockquote]:leading-relaxed [&_blockquote]:m-0 [&_blockquote:empty]:min-h-[1.5em]"
+						className="px-3 py-3 text-forest outline-none [&_.slate-placeholder]:text-forest/30 [&_p]:font-mono [&_p]:text-sm [&_p]:m-0 [&_p:empty]:min-h-[1.5em] [&_blockquote]:border-l-4 [&_blockquote]:border-clay [&_blockquote]:bg-clay/5 [&_blockquote]:px-3 [&_blockquote]:py-1 [&_blockquote]:font-mono [&_blockquote]:text-sm [&_blockquote]:m-0 [&_blockquote:empty]:min-h-[1.5em]"
 						style={{ minHeight }}
 						placeholder="Start typing..."
 					/>
