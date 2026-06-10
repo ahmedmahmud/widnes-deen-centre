@@ -191,6 +191,23 @@ const mediaRows: Array<{
 }> = [];
 
 for (const seed of SEEDS) {
+  // Check if media already exists in DB
+  const existing = await db.query.mediaItems.findFirst({
+    where: (table, { eq }) => eq(table.id, seed.id),
+  });
+
+  if (existing) {
+    console.log(`  Media "${seed.filename}" already exists — skipping S3 upload.`);
+    mediaRows.push({
+      id: seed.id,
+      filename: seed.filename,
+      storagePath: existing.storagePath,
+      mimeType: existing.mimeType,
+      sizeBytes: existing.sizeBytes,
+    });
+    continue;
+  }
+
   const buffer = makePlaceholderSvg(seed.label, seed.hue);
   const stored = await mediaStorage.upload({
     buffer,
