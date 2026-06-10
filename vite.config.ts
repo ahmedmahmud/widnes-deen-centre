@@ -13,7 +13,9 @@ export default defineConfig({
   plugins: [
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tanstackStart(),
-    nitro(),
+    nitro({
+      serveStatic: true,
+    }),
     viteReact(),
     tailwindcss(),
     devtools(),
