@@ -256,7 +256,7 @@ function AdminRoute() {
                   value={values.jamaatAsr}
                   onChange={(v) => updateField("jamaatAsr", v)}
                 />
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 w-full">
                   <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
                     Maghrib Offset (minutes after sunset)
                   </span>
@@ -266,9 +266,9 @@ function AdminRoute() {
                     onChange={(e) =>
                       updateField("jamaatMaghribOffset", Number(e.target.value))
                     }
-                    className="border border-forest/20 px-4 py-2 bg-white/70"
+                    className="block w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest"
                   />
-                  <p className="text-xs text-forest/40 font-mono">
+                  <p className="text-xs text-forest/40 font-mono w-full">
                     Maghrib is auto-calculated from sunset time.
                     <br />
                     Today's sunset: <span className="text-forest/60">{(() => {
@@ -753,14 +753,14 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white/70 border border-forest/10 p-6 sm:p-8 space-y-6">
-      <div>
+    <div className="bg-white/70 border border-forest/10 p-6 sm:p-8 space-y-6 w-full overflow-hidden">
+      <div className="w-full">
         <h2 className="font-serif text-2xl text-forest">{title}</h2>
         {description && (
           <p className="font-mono text-xs text-forest/40 mt-1">{description}</p>
         )}
       </div>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-4 w-full">{children}</div>
     </div>
   );
 }
@@ -788,7 +788,7 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
@@ -818,7 +818,7 @@ function TimeInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </label>
   );
@@ -846,7 +846,7 @@ function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="w-full border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full border border-forest/20 px-4 py-2 bg-white/70 min-h-[100px] focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
@@ -869,7 +869,7 @@ function ImagePickerField({
   onClear: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
