@@ -27,5 +27,8 @@ export async function uploadMedia({ file, userId }: UploadInput) {
     })
 		.returning();
 
-	return saved;
+	return {
+		...saved,
+		url: stored.publicUrl,
+	};
 }

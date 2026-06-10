@@ -82,6 +82,7 @@ export type MediaItem = {
 	filename: string;
 	originalFilename: string;
 	storagePath: string;
+	url: string;
 	mimeType: string;
 	sizeBytes: number;
 	status: "active" | "archived";

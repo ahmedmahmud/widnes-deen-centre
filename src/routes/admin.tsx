@@ -99,20 +99,15 @@ function AdminRoute() {
     (mediaId: string | null) => {
       if (!mediaId) return null;
 
-      const ensureUrl = (val: string) => {
-        if (val.startsWith("http://") || val.startsWith("https://")) return val;
-        return `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${val.startsWith("/") ? val.slice(1) : val}`;
-      };
-
       // Check version media first
       const fromVersion = data.landing.media[mediaId];
       if (fromVersion) {
-        return ensureUrl(fromVersion.url);
+        return fromVersion.url;
       }
       // Then check media items list
       const match = mediaItems.find((item) => item.id === mediaId);
       if (!match) return null;
-      return ensureUrl(match.storagePath);
+      return match.url;
     },
     [data.landing.media, mediaItems],
   );
@@ -975,11 +970,7 @@ function MediaManager({
             >
               {item.mimeType.startsWith("image/") ? (
                 <img
-                  src={
-                    item.storagePath.startsWith("http://") || item.storagePath.startsWith("https://")
-                      ? item.storagePath
-                      : `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
-                  }
+                  src={item.url}
                   alt={item.originalFilename}
                   className="w-full h-48 object-cover"
                 />
@@ -1134,11 +1125,7 @@ function MediaPickerModal({
               >
                 {item.mimeType.startsWith("image/") ? (
                   <img
-                    src={
-                      item.storagePath.startsWith("http://") || item.storagePath.startsWith("https://")
-                        ? item.storagePath
-                        : `https://t3.storageapi.dev/lightweight-duffel-4zvx9r/${item.storagePath.startsWith("/") ? item.storagePath.slice(1) : item.storagePath}`
-                    }
+                    src={item.url}
                     alt={item.originalFilename}
                     className="w-full h-32 object-cover group-hover:opacity-80 transition-opacity"
                   />

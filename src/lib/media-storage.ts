@@ -22,6 +22,7 @@ import {
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /* ── Types ── */
 
@@ -146,7 +147,7 @@ export const mediaStorage = {
 
 		return {
 			storagePath: key,
-			publicUrl: buildPublicUrl(key),
+			publicUrl: await this.getPresignedUrl(key),
 			sizeBytes: file.buffer.length,
 		};
 	},
@@ -158,6 +159,13 @@ export const mediaStorage = {
 			new GetObjectCommand({ Bucket: bucket, Key: key }),
 		);
 		return response;
+	},
+
+	async getPresignedUrl(key: string, expiresIn = 3600): Promise<string> {
+		const client = getClient();
+		const bucket = getBucket();
+		const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+		return getSignedUrl(client, command, { expiresIn });
 	},
 
 	async delete(storagePath: string): Promise<void> {

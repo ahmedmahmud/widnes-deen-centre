@@ -200,6 +200,7 @@ export const getLandingContentFn = createServerFn({ method: "GET" }).handler(
 		const { getSunsetTime, formatSunsetTime } = await import(
 			"@/lib/cms/sunset"
 		);
+		const { mediaStorage } = await import("@/lib/media-storage");
 
 		const data = await getLatestPublishedLanding();
 		const hydrated = hydrateMedia(data.content, data.media);
@@ -250,11 +251,9 @@ export const getLandingContentFn = createServerFn({ method: "GET" }).handler(
 				if (path.startsWith("http://") || path.startsWith("https://")) {
 					downloadHref = path;
 				} else {
-					const endpoint = process.env.S3_ENDPOINT || "https://t3.storageapi.dev";
-					const bucket = process.env.S3_BUCKET || "lightweight-duffel-4zvx9r";
-					const base = endpoint.endsWith("/") ? endpoint.slice(0, -1) : endpoint;
-					const key = path.startsWith("/") ? path.slice(1) : path;
-					downloadHref = `${base}/${bucket}/${key}`;
+					downloadHref = await mediaStorage.getPresignedUrl(
+						path.startsWith("/") ? path.slice(1) : path,
+					);
 				}
 			}
 		}

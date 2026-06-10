@@ -8,7 +8,8 @@ import {
 	versionMedia,
 } from "@/db/schema";
 import { defaultPageContent } from "@/lib/cms/default-content";
-import type { JamaatTime, PageContent } from "@/lib/cms/types";
+import type { JamaatTime, MediaItem, PageContent } from "@/lib/cms/types";
+import { mediaStorage } from "@/lib/media-storage";
 
 export const LANDING_PAGE_SLUG = "landing";
 
@@ -34,21 +35,15 @@ const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
  * storagePath is an S3 key like "uploads/uuid-file.jpg".
  * We use the public URL if defined, otherwise construct it directly from the bucket.
  */
-const resolveMediaUrl = (storagePath: string): string => {
+const resolveMediaUrl = async (storagePath: string): Promise<string> => {
 	// Already a full URL
 	if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
 		return storagePath;
 	}
 
-	// For standard S3 keys, we point them directly to the new storage API.
-	// Ensure no leading slash in storage path.
+	// For standard S3 keys, generate an authenticated presigned URL
 	const path = storagePath.startsWith("/") ? storagePath.slice(1) : storagePath;
-	
-	// Default to returning the constructed full public URL
-	const endpoint = process.env.S3_ENDPOINT || "https://t3.storageapi.dev";
-	const bucket = process.env.S3_BUCKET || "lightweight-duffel-4zvx9r";
-	const base = endpoint.endsWith("/") ? endpoint.slice(0, -1) : endpoint;
-	return `${base}/${bucket}/${path}`;
+	return mediaStorage.getPresignedUrl(path);
 };
 
 /**
@@ -97,13 +92,13 @@ async function buildVersionBundle(
 			})
 		: [];
 
-	const media = mediaRows.reduce<PageVersionBundle["media"]>((acc, item) => {
-		acc[item.id] = {
+	const media: PageVersionBundle["media"] = {};
+	for (const item of mediaRows) {
+		media[item.id] = {
 			id: item.id,
-			url: resolveMediaUrl(item.storagePath),
+			url: await resolveMediaUrl(item.storagePath),
 		};
-		return acc;
-	}, {});
+	}
 
 	return {
 		pageId,
@@ -190,13 +185,21 @@ export async function createPageVersion({
 	return version;
 }
 
-export async function listMedia() {
+export async function listMedia(): Promise<MediaItem[]> {
 	const items = await db.query.mediaItems.findMany({
 		where: (table, { eq }) => eq(table.status, "active"),
 		orderBy: (table, { desc }) => [desc(table.createdAt)],
 	});
 
-	return items;
+	const results: MediaItem[] = [];
+	for (const item of items) {
+		results.push({
+			...item,
+			url: await resolveMediaUrl(item.storagePath),
+		} as MediaItem);
+	}
+
+	return results;
 }
 
 export async function canDeleteMedia(mediaId: string) {
