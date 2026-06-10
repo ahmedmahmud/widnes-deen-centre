@@ -13,7 +13,7 @@ export default defineConfig({
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tanstackStart({
       deployment: {
-        preset: "node-server",
+        preset: process.env.NITRO_PRESET || "node-server",
       },
     }),
     viteReact(),
