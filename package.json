@@ -18,7 +18,7 @@
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "seed": "bun run scripts/seed.ts",
-    "start": "ls -la .output/server/index.mjs || (echo 'ENTRY POINT MISSING! Root content:' && ls -R .) && bun .output/server/index.mjs"
+    "start": "bun dist/server/server.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1004.0",
