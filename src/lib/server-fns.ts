@@ -76,6 +76,7 @@ export const getAdminData = createServerFn({ method: "GET" }).handler(
 		const { getLatestDraftLanding, listMedia } = await import(
 			"@/lib/cms/content"
 		);
+		const { getSunsetTime } = await import("@/lib/cms/sunset");
 		const { logInfo } = await import("@/lib/logger");
 
 		logInfo("admin", "Loading admin data");
@@ -83,11 +84,19 @@ export const getAdminData = createServerFn({ method: "GET" }).handler(
 		const landing = await getLatestDraftLanding();
 		const media = await listMedia();
 
+		const today = new Date();
+		const date = today.toISOString().slice(0, 10);
+		const { sunsetUtc } = await getSunsetTime({
+			date,
+			latitude: LATITUDE,
+			longitude: LONGITUDE,
+		});
+
 		logInfo("admin", "Admin data loaded", {
 			versionId: landing.versionId,
 			mediaCount: media.length,
 		});
-		return { landing, media };
+		return { landing, media, sunsetUtc };
 	},
 );
 
