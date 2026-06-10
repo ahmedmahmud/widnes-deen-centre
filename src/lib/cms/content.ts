@@ -203,11 +203,37 @@ export async function listMedia(): Promise<MediaItem[]> {
 }
 
 export async function canDeleteMedia(mediaId: string) {
-	const references = await db.query.versionMedia.findMany({
-		where: (table, { eq }) => eq(table.mediaId, mediaId),
+	// 1. Get all published version IDs from all pages
+	const activePages = await db.query.pages.findMany({
+		columns: { publishedVersionId: true },
+	});
+	const activeVersionIds = activePages
+		.map((p) => p.publishedVersionId)
+		.filter((id): id is string => !!id);
+
+	if (activeVersionIds.length === 0) return true;
+
+	// 2. Check if this media is linked to any of those active versions
+	const references = await db.query.versionMedia.findFirst({
+		where: (table, { and, eq, inArray }) =>
+			and(
+				eq(table.mediaId, mediaId),
+				inArray(table.versionId, activeVersionIds),
+			),
 	});
 
-	return references.length === 0;
+	if (references) return false;
+
+	// 3. Check if it's the scheduleMediaId of an active version
+	const scheduleRef = await db.query.pageVersions.findFirst({
+		where: (table, { and, eq, inArray }) =>
+			and(
+				eq(table.scheduleMediaId, mediaId),
+				inArray(table.id, activeVersionIds),
+			),
+	});
+
+	return !scheduleRef;
 }
 
 export async function archiveMedia(mediaId: string) {
