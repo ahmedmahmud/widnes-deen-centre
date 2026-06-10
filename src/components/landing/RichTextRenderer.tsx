@@ -24,27 +24,21 @@ export function RichTextRenderer({
 }: RichTextRendererProps) {
 	const normalizedValue = normalizeRichText(value);
 	const rootClassName = [className].filter(Boolean).join(" ");
-	const paragraphClass = [paragraphClassName]
-		.filter(Boolean)
-		.join(" ");
+	
+	// Default classes are now minimal to avoid overriding parent styles
+	const paragraphClass = [paragraphClassName].filter(Boolean).join(" ");
 	const blockquoteClass = [
-		"pl-4 border-l-4 border-clay italic text-forest/80",
+		"pl-4 border-l-4 border-clay italic",
 		blockquoteClassName,
 	]
 		.filter(Boolean)
 		.join(" ");
-	const h1Class = ["font-serif text-4xl font-black leading-tight", h1ClassName]
-		.filter(Boolean)
-		.join(" ");
-	const h2Class = ["font-serif text-3xl font-bold leading-tight", h2ClassName]
-		.filter(Boolean)
-		.join(" ");
-	const h3Class = ["font-serif text-2xl font-bold leading-tight", h3ClassName]
-		.filter(Boolean)
-		.join(" ");
+	const h1Class = [h1ClassName].filter(Boolean).join(" ");
+	const h2Class = [h2ClassName].filter(Boolean).join(" ");
+	const h3Class = [h3ClassName].filter(Boolean).join(" ");
 
 	return (
-		<div className={`${rootClassName} whitespace-pre-wrap`}>
+		<div className={rootClassName}>
 			{normalizedValue.map((node, i) => (
 				<RenderElement
 					key={i}
