@@ -9,7 +9,6 @@ dist-ssr
 .nitro
 .tanstack
 .wrangler
-.output
 .netlify
 .vinxi
 __unconfig*
