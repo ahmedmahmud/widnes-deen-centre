@@ -779,7 +779,7 @@ function TextInput({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1 w-full">
+    <label className="flex flex-col gap-1 w-full min-w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
@@ -788,7 +788,7 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="block w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full min-w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed appearance-none"
       />
       {hint && (
         <span className="text-xs text-forest/30 font-mono">{hint}</span>
@@ -809,7 +809,7 @@ function TimeInput({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1 w-full">
+    <label className="flex flex-col gap-1 w-full min-w-full">
       <span className="font-mono text-xs uppercase tracking-widest text-forest/60">
         {label}
       </span>
@@ -818,7 +818,7 @@ function TimeInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="block w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full min-w-full border border-forest/20 px-4 py-2 bg-white/70 focus:outline-none focus:border-forest disabled:opacity-50 disabled:cursor-not-allowed appearance-none"
       />
     </label>
   );
