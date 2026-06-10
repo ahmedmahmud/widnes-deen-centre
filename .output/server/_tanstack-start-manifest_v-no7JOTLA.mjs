@@ -1,0 +1,4 @@
+const tsrStartManifest = () => ({ "routes": { "__root__": { "filePath": "/Users/ahmed/Documents/work/tanstack-start/widnes-mosque/src/routes/__root.tsx", "children": ["/", "/admin", "/login"], "preloads": ["/assets/main-CNdDtkP-.js"], "assets": [] }, "/": { "filePath": "/Users/ahmed/Documents/work/tanstack-start/widnes-mosque/src/routes/index.tsx", "assets": [], "preloads": ["/assets/index-ByjZURrX.js"] }, "/admin": { "filePath": "/Users/ahmed/Documents/work/tanstack-start/widnes-mosque/src/routes/admin.tsx", "assets": [], "preloads": ["/assets/admin-BWkegch7.js"] }, "/login": { "filePath": "/Users/ahmed/Documents/work/tanstack-start/widnes-mosque/src/routes/login.tsx", "assets": [], "preloads": ["/assets/login-DjkNCU6L.js"] } }, "clientEntry": "/assets/main-CNdDtkP-.js" });
+export {
+  tsrStartManifest
+};
