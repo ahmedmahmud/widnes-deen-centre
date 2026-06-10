@@ -76,21 +76,23 @@ function RenderElement({
 	const children = node.children.map((child, i) => (
 		<RenderLeaf key={i} leaf={child} />
 	));
-	const hasVisibleText = node.children.some((child) => child.text.length > 0);
+	const hasVisibleText = node.children.some((child) => child.text.trim().length > 0);
 	const content = hasVisibleText ? children : "\u00A0";
+
+	const baseClass = !hasVisibleText ? "min-h-[1.5em]" : "";
 
 	switch (node.type) {
 		case "h1":
-			return <h1 className={h1ClassName}>{content}</h1>;
+			return <h1 className={`${h1ClassName} ${baseClass} mb-4`}>{content}</h1>;
 		case "h2":
-			return <h2 className={h2ClassName}>{content}</h2>;
+			return <h2 className={`${h2ClassName} ${baseClass} mb-3`}>{content}</h2>;
 		case "h3":
-			return <h3 className={h3ClassName}>{content}</h3>;
+			return <h3 className={`${h3ClassName} ${baseClass} mb-2`}>{content}</h3>;
 		case "blockquote":
-			return <blockquote className={blockquoteClassName}>{content}</blockquote>;
+			return <blockquote className={`${blockquoteClassName} ${baseClass} mb-4`}>{content}</blockquote>;
 		case "p":
 		default:
-			return <p className={paragraphClassName}>{content}</p>;
+			return <p className={`${paragraphClassName} ${baseClass} mb-4`}>{content}</p>;
 	}
 }
 
