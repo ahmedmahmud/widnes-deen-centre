@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { JamaatTime } from "@/lib/cms/types";
 
 type PrayerTimesSectionProps = {
@@ -10,12 +11,52 @@ type PrayerTimesSectionProps = {
 const timeByName = (times: JamaatTime[], name: JamaatTime["name"]) =>
   times.find((time) => time.name === name);
 
+/**
+ * Determine which prayer is "next" based on the current time.
+ */
+function getNextPrayerName(times: JamaatTime[]): JamaatTime["name"] {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const parseTime = (timeStr?: string | null) => {
+    if (!timeStr) return null;
+    const [hrs, mins] = timeStr.split(":").map(Number);
+    if (isNaN(hrs) || isNaN(mins)) return null;
+    return hrs * 60 + mins;
+  };
+
+  const schedule = [
+    { name: "fajr", mins: parseTime(timeByName(times, "fajr")?.time) },
+    { name: "dhuhr", mins: parseTime(timeByName(times, "dhuhr")?.time) },
+    { name: "asr", mins: parseTime(timeByName(times, "asr")?.time) },
+    { name: "maghrib", mins: parseTime(timeByName(times, "maghrib")?.time) },
+    { name: "isha", mins: parseTime(timeByName(times, "isha")?.time) },
+  ].filter((p) => p.mins !== null) as { name: JamaatTime["name"]; mins: number }[];
+
+  // Find the first prayer that is later than "now"
+  const upcoming = schedule.find((p) => p.mins > currentMinutes);
+
+  // If none are later than "now", it means it's after Isha, so the next prayer is tomorrow's Fajr
+  return upcoming ? upcoming.name : "fajr";
+}
+
 export function PrayerTimesSection({
   times,
   dateLabel,
   hijriLabel,
   downloadHref,
 }: PrayerTimesSectionProps) {
+  const [nextPrayer, setNextPrayer] = useState<JamaatTime["name"] | null>(null);
+
+  useEffect(() => {
+    setNextPrayer(getNextPrayerName(times));
+    // Check again every minute
+    const interval = setInterval(() => {
+      setNextPrayer(getNextPrayerName(times));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [times]);
+
   const fajr = timeByName(times, "fajr");
   const dhuhr = timeByName(times, "dhuhr");
   const asr = timeByName(times, "asr");
@@ -56,20 +97,20 @@ export function PrayerTimesSection({
         </div>
         {/* Desktop: 6-column grid */}
         <div className="hidden lg:grid lg:grid-cols-6 border-t-2 border-b-2 border-forest">
-          <PrayerTimeCard name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
-          <PrayerTimeCard name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
-          <PrayerTimeCard name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
-          <PrayerTimeCard name="Maghrib" label="Iqamah" time={maghribLabel} />
-          <PrayerTimeCard name="Isha" label="Iqamah" time={isha?.time ?? ""} />
+          <PrayerTimeCard name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent featured={nextPrayer === "fajr"} />
+          <PrayerTimeCard name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} featured={nextPrayer === "dhuhr"} />
+          <PrayerTimeCard name="Asr" label="Iqamah" time={asr?.time ?? ""} featured={nextPrayer === "asr"} />
+          <PrayerTimeCard name="Maghrib" label="Iqamah" time={maghribLabel} featured={nextPrayer === "maghrib"} />
+          <PrayerTimeCard name="Isha" label="Iqamah" time={isha?.time ?? ""} featured={nextPrayer === "isha"} />
           <PrayerTimeCard name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
         </div>
         {/* Mobile/Tablet: compact 2-column or 3-column grid */}
         <div className="lg:hidden grid grid-cols-2 sm:grid-cols-3 border-b-2 border-forest">
-          <PrayerTimeCardCompact name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent />
-          <PrayerTimeCardCompact name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} />
-          <PrayerTimeCardCompact name="Asr" label="Iqamah" time={asr?.time ?? ""} featured />
-          <PrayerTimeCardCompact name="Maghrib" label="Iqamah" time={maghribLabel} />
-          <PrayerTimeCardCompact name="Isha" label="Iqamah" time={isha?.time ?? ""} />
+          <PrayerTimeCardCompact name="Fajr" label="Iqamah" time={fajr?.time ?? ""} accent featured={nextPrayer === "fajr"} />
+          <PrayerTimeCardCompact name="Dhuhr" label="Iqamah" time={dhuhr?.time ?? ""} featured={nextPrayer === "dhuhr"} />
+          <PrayerTimeCardCompact name="Asr" label="Iqamah" time={asr?.time ?? ""} featured={nextPrayer === "asr"} />
+          <PrayerTimeCardCompact name="Maghrib" label="Iqamah" time={maghribLabel} featured={nextPrayer === "maghrib"} />
+          <PrayerTimeCardCompact name="Isha" label="Iqamah" time={isha?.time ?? ""} featured={nextPrayer === "isha"} />
           <PrayerTimeCardCompact name="Jummah" label="Khutbah" time={jummah?.time ?? ""} muted />
         </div>
       </div>
