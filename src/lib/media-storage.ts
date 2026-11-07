@@ -147,7 +147,7 @@ export const mediaStorage = {
 
 		return {
 			storagePath: key,
-			publicUrl: await this.getPresignedUrl(key),
+			publicUrl: buildPublicUrl(key),
 			sizeBytes: file.buffer.length,
 		};
 	},
@@ -166,6 +166,11 @@ export const mediaStorage = {
 		const bucket = getBucket();
 		const command = new GetObjectCommand({ Bucket: bucket, Key: key });
 		return getSignedUrl(client, command, { expiresIn });
+	},
+
+	/** Returns a permanent public URL (requires public-read bucket policy). */
+	getPublicUrl(key: string): string {
+		return buildPublicUrl(key);
 	},
 
 	async delete(storagePath: string): Promise<void> {

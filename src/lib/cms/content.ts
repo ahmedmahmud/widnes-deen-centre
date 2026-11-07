@@ -33,17 +33,19 @@ const mapJamaatRow = (row: typeof jamaatTimes.$inferSelect): JamaatTime => ({
  * Turn a storagePath into a URL the browser can load.
  *
  * storagePath is an S3 key like "uploads/uuid-file.jpg".
- * We use the public URL if defined, otherwise construct it directly from the bucket.
+ * We use permanent public URLs (requires public-read bucket policy) so that
+ * images never expire. Presigned URLs are only used for private downloads
+ * (e.g. the schedule PDF) where temporary access is intentional.
  */
-const resolveMediaUrl = async (storagePath: string): Promise<string> => {
+const resolveMediaUrl = (storagePath: string): string => {
 	// Already a full URL
 	if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
 		return storagePath;
 	}
 
-	// For standard S3 keys, generate an authenticated presigned URL
+	// Use permanent public URL — bucket has public-read policy set in ensureBucket()
 	const path = storagePath.startsWith("/") ? storagePath.slice(1) : storagePath;
-	return mediaStorage.getPresignedUrl(path);
+	return mediaStorage.getPublicUrl(path);
 };
 
 /**
@@ -96,7 +98,7 @@ async function buildVersionBundle(
 	for (const item of mediaRows) {
 		media[item.id] = {
 			id: item.id,
-			url: await resolveMediaUrl(item.storagePath),
+			url: resolveMediaUrl(item.storagePath),
 		};
 	}
 
@@ -195,7 +197,7 @@ export async function listMedia(): Promise<MediaItem[]> {
 	for (const item of items) {
 		results.push({
 			...item,
-			url: await resolveMediaUrl(item.storagePath),
+			url: resolveMediaUrl(item.storagePath),
 		} as MediaItem);
 	}
 
